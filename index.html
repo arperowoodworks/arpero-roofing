@@ -2,20 +2,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Arpero Roofing"><meta name="theme-color" content="#14282b">
+<meta name="apple-mobile-web-app-title" content="Arpero Roofing"><meta name="theme-color" content="#0f2a3a">
 <link rel="manifest" href="manifest.json"><link rel="icon" href="icon-180.png"><link rel="apple-touch-icon" href="icon-180.png">
 <title>Arpero Roofing</title>
 <style>
-*{box-sizing:border-box}html{background:#2a1a10 linear-gradient(160deg,#4a2c17,#1f3a3a 60%,#14282b) fixed;-webkit-text-size-adjust:100%;touch-action:manipulation}
+*{box-sizing:border-box}html{background:#0f2533 linear-gradient(160deg,#1d4e6b,#1b5560 60%,#0f2a3a) fixed;-webkit-text-size-adjust:100%;touch-action:manipulation}
 body{margin:0;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;padding:env(safe-area-inset-top) 12px calc(110px + env(safe-area-inset-bottom));overflow-x:hidden}
-body::before{content:"";position:fixed;inset:-20%;z-index:-1;background:radial-gradient(circle at 15% 15%,#c98a3c 0,transparent 45%),radial-gradient(circle at 85% 35%,#0f5257 0,transparent 50%),radial-gradient(circle at 30% 85%,#0b3b40 0,transparent 50%),radial-gradient(circle at 80% 90%,#8a4f22 0,transparent 45%),linear-gradient(160deg,#4a2c17,#1f3a3a 60%,#14282b);filter:blur(30px)}
+body::before{content:"";position:fixed;inset:-20%;z-index:-1;background:radial-gradient(circle at 15% 15%,#3aa8d8 0,transparent 45%),radial-gradient(circle at 85% 35%,#0f5257 0,transparent 50%),radial-gradient(circle at 30% 85%,#0b3b40 0,transparent 50%),radial-gradient(circle at 80% 90%,#2a7f8f 0,transparent 45%),linear-gradient(160deg,#1d4e6b,#1b5560 60%,#0f2a3a);filter:blur(30px)}
 h1{font-size:22px;margin:0}h2{font-size:17px;margin:18px 0 8px}h1,h2,h3,summary{text-shadow:0 1px 3px rgba(0,0,0,.35)}
-.card,.tot div,dialog{background:rgba(30,20,12,.72);border:1px solid rgba(255,255,255,.25);border-radius:20px;box-shadow:0 8px 28px rgba(0,0,0,.28);color:#fff}
+.card,.tot div,dialog{background:rgba(14,34,50,.72);border:1px solid rgba(255,255,255,.25);border-radius:20px;box-shadow:0 8px 28px rgba(0,0,0,.28);color:#fff}
 .card{padding:12px;margin:10px 0}.top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.name{font-size:17px;font-weight:700}.sub{font-size:14px;color:rgba(255,255,255,.78)}
-.tot{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.tot div{padding:10px;text-align:center;font-size:13px}.tot b{display:block;font-size:20px;color:#ffd27a}
+.tot{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.tot div{padding:10px;text-align:center;font-size:13px}.tot b{display:block;font-size:20px;color:#7dd3fc}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 button{min-height:44px;padding:0 14px;font-size:16px;font-weight:600;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:14px}
-button.p{background:rgba(201,138,60,.85);color:#1e120a;border-color:rgba(255,220,160,.6)}button.d{background:rgba(160,40,30,.35);border-color:rgba(255,120,100,.6);color:#ffd6cf}button.s{min-height:34px;font-size:14px;padding:0 10px}
+button.p{background:linear-gradient(135deg,#38bdf8,#2dd4bf);color:#062a3a;border-color:rgba(186,240,255,.7)}button.d{background:rgba(160,40,30,.35);border-color:rgba(255,120,100,.6);color:#ffd6cf}button.s{min-height:34px;font-size:14px;padding:0 10px}
 .tag{display:inline-block;border-radius:20px;padding:2px 9px;font-size:12px;font-weight:700;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);margin:4px 4px 0 0}
 .tag.g{background:rgba(60,160,110,.5)}.tag.r{color:#ff9a8a;border-color:#ff9a8a}.pos{color:#9fe8b0}.neg{color:#ff9a8a}
 dialog{width:94%;max-width:440px;max-height:90vh;max-height:90dvh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:14px}dialog::backdrop{background:rgba(0,0,0,.5)}
@@ -25,22 +25,22 @@ select option{color:#111;background:#fff}::placeholder{color:rgba(255,255,255,.5
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
 .li{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.15);padding:8px 0;font-size:15px}.li:last-child{border:0}.li small{display:block;color:rgba(255,255,255,.7);font-size:12px}
 .ph{color:rgba(255,255,255,.7);font-size:14px;line-height:1.5}
-.fab{position:fixed;right:16px;bottom:calc(92px + env(safe-area-inset-bottom));border-radius:30px;height:56px;font-size:17px;background:rgba(201,138,60,.9);color:#1e120a;box-shadow:0 4px 14px #000a;z-index:50}
+.fab{position:fixed;right:16px;bottom:calc(92px + env(safe-area-inset-bottom));border-radius:30px;height:56px;font-size:17px;background:linear-gradient(135deg,#38bdf8,#2dd4bf);color:#062a3a;box-shadow:0 4px 14px #000a;z-index:50}
 .thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.thumbs img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.3)}
 .ck{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:15px;margin:0}.ck input{width:24px;height:24px;flex:0 0 24px;margin:0}
-.chips{display:flex;gap:6px;overflow-x:auto;margin:6px 0}.chips button{white-space:nowrap;min-height:36px;font-size:14px}.chips button.on{background:rgba(201,138,60,.85);color:#1e120a}
-nav.tabs{position:fixed;left:12px;right:12px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:60;display:flex;border-radius:26px;background:rgba(30,20,12,.82);border:1px solid rgba(255,255,255,.28);box-shadow:0 10px 30px rgba(0,0,0,.35);padding:6px 4px}
+.chips{display:flex;gap:6px;overflow-x:auto;margin:6px 0}.chips button{white-space:nowrap;min-height:36px;font-size:14px}.chips button.on{background:linear-gradient(135deg,#38bdf8,#2dd4bf);color:#062a3a}
+nav.tabs{position:fixed;left:12px;right:12px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:60;display:flex;border-radius:26px;background:rgba(14,34,50,.82);border:1px solid rgba(255,255,255,.28);box-shadow:0 10px 30px rgba(0,0,0,.35);padding:6px 4px}
 nav.tabs button{flex:1;min-width:0;background:none;border:0;color:rgba(255,255,255,.65);padding:4px 0;font-size:11px;font-weight:500;min-height:0;border-radius:0}
-nav.tabs button.on{color:#fff;font-weight:600}nav.tabs .tic{display:block;margin:0 auto 2px;width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}nav.tabs button.on .tic{stroke:#ffcf8a;stroke-width:2}
+nav.tabs button.on{color:#fff;font-weight:600}nav.tabs .tic{display:block;margin:0 auto 2px;width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}nav.tabs button.on .tic{stroke:#7dd3fc;stroke-width:2}
 @supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
 .card,.tot div,dialog{background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%)}
-dialog{background:rgba(40,30,22,.85)}
-nav.tabs{background:rgba(35,24,16,.55);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%)}}
+dialog{background:rgba(18,38,54,.85)}
+nav.tabs{background:rgba(16,36,52,.55);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%)}}
 .ln{border-bottom:1px solid rgba(255,255,255,.15);padding:6px 0}.lr{display:flex;gap:6px;align-items:center;margin-top:4px}.lr input,.lr select{min-width:0;flex:1;padding:8px}.lr .a{flex:0 0 74px;text-align:right;font-size:14px}.lr .mf{flex:0 0 auto;margin:0}
 #invv{position:fixed;inset:0;z-index:100;overflow:auto;background:#eee;padding:calc(12px + env(safe-area-inset-top)) 12px 30px}#invv .inv{background:#fff;color:#111;border-radius:12px;padding:18px;font-size:14px;max-width:720px;margin:auto}
 .inv .ih{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:10px}.inv .ih img{height:80px}.inv .ic{display:flex;justify-content:space-between;gap:12px;margin-top:12px}
 .inv table{width:100%;border-collapse:collapse;margin-top:8px}.inv th{text-align:left;border-bottom:2px solid #111;padding:6px 4px;font-size:13px}.inv td{padding:6px 4px;border-bottom:1px solid #ddd}.inv th:not(:first-child),.inv td:not(:first-child){text-align:right;white-space:nowrap}.inv .t td{border:0;font-weight:700}.inv .t.g td{font-size:17px;border-top:2px solid #111}
-#invv button{color:#111;background:#fff;border-color:#999}#invv button.p{background:#c98a3c}
+#invv button{color:#111;background:#fff;border-color:#999}#invv button.p{background:#38bdf8}
 @media print{body>*:not(#invv){display:none!important}body::before{display:none}html,body{background:#fff!important;padding:0}#invv{position:static;background:#fff;padding:0}.noprint{display:none!important}#invv .inv{border-radius:0;padding:0}}
 .lsum{font-weight:800;border-top:1px solid rgba(255,255,255,.4)!important}
 </style></head><body>
@@ -151,7 +151,7 @@ open(`<div class="name">${id?'Edit expense':'New expense'}</div>${sel('cat','Typ
 v=>{v.amount=+v.amount||0;if(id)Object.assign(e,v);else S.exp.push(Object.assign({id:uid()},v));save()},id?()=>{S.exp=S.exp.filter(x=>x.id!==id);save()}:null)}
 function editSafe(id){const s=id?S.safety.find(x=>x.id===id):{date:TODAY(),job:F.job,checks:{}};let i=0;
 open(`<div class="name">Daily safety checklist</div><label>Job<select name="job" required>${jobOpts(s.job)}</select></label><div class="g2">${fld('date','Date',s.date,'date','required')}${fld('crew','Crew on site',s.crew)}</div>`+
-SAFE.map(([g,items])=>`<h3 style="margin:14px 0 2px;font-size:15px;color:#ffd27a">${g}</h3>`+items.map(t=>{const k='c'+(i++);return `<label class="ck"><input type="checkbox" name="${k}" ${s.checks[k]?'checked':''}><span>${esc(t)}</span></label>`}).join('')).join('')+
+SAFE.map(([g,items])=>`<h3 style="margin:14px 0 2px;font-size:15px;color:#7dd3fc">${g}</h3>`+items.map(t=>{const k='c'+(i++);return `<label class="ck"><input type="checkbox" name="${k}" ${s.checks[k]?'checked':''}><span>${esc(t)}</span></label>`}).join('')).join('')+
 `<div class="row"><button type="button" class="s" onclick="frm.querySelectorAll('.ck input').forEach(c=>c.checked=true)">Check all</button></div><label>Notes / hazards<textarea name="notes" rows="2">${esc(s.notes||'')}</textarea></label>`,
 v=>{const c={};Object.keys(v).filter(k=>/^c\d+$/.test(k)).forEach(k=>c[k]=true);const o={job:v.job,date:v.date,crew:v.crew,notes:v.notes,checks:c};if(id)Object.assign(s,o);else S.safety.push(Object.assign({id:uid()},o));save()},id?()=>{S.safety=S.safety.filter(x=>x.id!==id);save()}:null)}
 // ---- photos (IndexedDB, resized)
@@ -199,7 +199,7 @@ function readLn(id){return [...document.querySelectorAll('#'+id+' .ln')].map(r=>
 function lnT(){frm.querySelectorAll('[id$=T]').forEach(t=>{const id=t.id.slice(0,-1),b=document.getElementById(id);if(!b)return;let s=0;b.querySelectorAll('.ln').forEach(r=>{const a=num(r.querySelector('.q').value)*num(r.querySelector('.r').value);s+=a;r.querySelector('.a').textContent=$(a)});t.textContent=$(s)})}
 // --- settings
 function editSettings(){const st=S.settings;
-open(`<div class="name">Settings — crew pay rates</div><div class="sub">Suggested (Houston avg), edit me. Used to pre-fill crew pay; you can change them on each payment.</div>${LK.filter(x=>x[0]!=='haul').map(([x,d])=>fld('crew_'+x,d+' $'+(SUG[x]!=null?` <small style="color:#ffd27a">(suggested ${SUG[x]})</small>`:''),st.crew[x],'number')).join('')}`,
+open(`<div class="name">Settings — crew pay rates</div><div class="sub">Suggested (Houston avg), edit me. Used to pre-fill crew pay; you can change them on each payment.</div>${LK.filter(x=>x[0]!=='haul').map(([x,d])=>fld('crew_'+x,d+' $'+(SUG[x]!=null?` <small style="color:#7dd3fc">(suggested ${SUG[x]})</small>`:''),st.crew[x],'number')).join('')}`,
 v=>{LK.forEach(([k])=>{if(('crew_'+k) in v)st.crew[k]=v['crew_'+k]});st.crewSeeded=1;save()})}
 // --- materials
 const MI=['Shingles','Starter','Ridge cap','Hip & ridge','Underlayment / felt','Ice & water','Drip edge','Pipe boots / jacks','1.5" bullet boot','2" bullet boot','3" bullet boot','Vents','Nails','Coil','Caulk','Other'],MU=['bundles','rolls','boxes','pcs'];
@@ -324,8 +324,8 @@ v=>{v.amount=+v.amount||0;if(v.cat==='Insurance')v.job='';if(id)Object.assign(e,
 const fxRow=f=>`<div class="lr fx"><input class="fn" placeholder="e.g. Insurance" value="${esc(f.name||'')}"><input class="fa" type="number" step="any" inputmode="decimal" placeholder="$" value="${esc(f.amount??'')}" style="flex:0 0 80px"><select class="ff" style="flex:0 0 100px">${['Monthly','Weekly'].map(x=>`<option ${x===(f.freq||'Monthly')?'selected':''}>${x}</option>`).join('')}</select><button type="button" class="s" onclick="this.parentNode.remove()">✕</button></div>`;
 function editSettings(){const st=S.settings;
 open(`<div class="name">Settings</div><div class="g2">${fld('myRate','My rate per square $',st.myRate,'number')}${fld('crewRate','Crew rate per square $',st.crewRate,'number')}</div><div class="sub">Both can be changed on each job.</div>
-<h3 style="font-size:15px;color:#ffd27a;margin:14px 0 0">Monthly fixed costs</h3><div class="sub">Insurance, truck payment, phone… weekly or monthly, never per job (weekly × 52 ÷ 12).</div><div id="fxl">${st.fixed.map(fxRow).join('')}</div><div class="row"><button type="button" class="s" onclick="fxl.insertAdjacentHTML('beforeend',fxRow({}))">＋ Fixed cost</button></div>
-<h3 style="font-size:15px;color:#ffd27a;margin:14px 0 0">Optional crew extras ($ per unit)</h3><div class="sub">Leave blank if you don't pay extras.</div>${LK.filter(x=>x[0]!=='haul'&&x[0]!=='sq').map(([x,d])=>fld('crew_'+x,d,st.crew[x],'number')).join('')}`,
+<h3 style="font-size:15px;color:#7dd3fc;margin:14px 0 0">Monthly fixed costs</h3><div class="sub">Insurance, truck payment, phone… weekly or monthly, never per job (weekly × 52 ÷ 12).</div><div id="fxl">${st.fixed.map(fxRow).join('')}</div><div class="row"><button type="button" class="s" onclick="fxl.insertAdjacentHTML('beforeend',fxRow({}))">＋ Fixed cost</button></div>
+<h3 style="font-size:15px;color:#7dd3fc;margin:14px 0 0">Optional crew extras ($ per unit)</h3><div class="sub">Leave blank if you don't pay extras.</div>${LK.filter(x=>x[0]!=='haul'&&x[0]!=='sq').map(([x,d])=>fld('crew_'+x,d,st.crew[x],'number')).join('')}`,
 v=>{st.myRate=num(v.myRate);st.crewRate=num(v.crewRate);LK.forEach(([k])=>{if(('crew_'+k) in v)st.crew[k]=v['crew_'+k]});st.fixed=[...document.querySelectorAll('#fxl .fx')].map(r=>({name:r.querySelector('.fn').value,amount:r.querySelector('.fa').value,freq:r.querySelector('.ff').value})).filter(f=>f.name||f.amount);save()})}
 const fixedMo=()=>S.settings.fixed.reduce((a,f)=>a+num(f.amount)*(f.freq==='Weekly'?52/12:1),0);
 // weekly schedule (week = Sun..Sat; Thu submit, Fri paid, Sat pay crews)
@@ -495,7 +495,7 @@ function jobMath(j){const q=j.inv&&num(j.inv.total),mm=mismatch(j),pr=profit(j),
 <div class="mc pay"><div class="mh">Pay ${esc(crewName(j))}</div><div class="mt">${$(paid)}</div>${pl}${itemMenu(j,'pay')}${hasPay(j.id)&&Math.abs(paid-estPay(j))>.01?`<div class="mli"><span>calc</span><b>${$(estPay(j))}</b></div>`:''}</div></div>
 <div class="sub" style="font-size:12px">Crew squares: ${crewTxt(j).replace(/ × .*/,'').replace(/<[^>]+>/g,'')}</div>
 <div class="sub">Expenses ${$(expCost(j.id))} | Profit <b class="${pr<0?'neg':'pos'}">${$(pr)}</b></div>${mm?`<div class="sub neg">⚠️ QB total is ${$(Math.abs(mm))} ${mm>0?'more':'less'} than calculated</div>`:''}`}
-(()=>{const st=document.createElement('style');st.textContent=`.money{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.mc{border-radius:14px;padding:9px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);min-width:0}.mc.bill{background:rgba(40,120,220,.35);border:1px solid rgba(120,180,255,.7)}.mc.pay{background:rgba(220,120,30,.38);border:1px solid rgba(255,180,100,.8)}.mh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;opacity:.95}.mt{font-size:26px;font-weight:800;margin:2px 0 6px}.mli{display:flex;justify-content:space-between;gap:4px;font-size:11.5px;opacity:.92;line-height:1.35}.mli b{font-weight:600;white-space:nowrap}`;document.head.appendChild(st)})();
+(()=>{const st=document.createElement('style');st.textContent=`.money{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.mc{border-radius:14px;padding:9px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);min-width:0}.mc.bill{background:rgba(70,105,235,.40);border:1px solid rgba(160,185,255,.8)}.mc.pay{background:rgba(250,135,75,.58);border:1px solid rgba(255,195,160,.85)}.mh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;opacity:.95}.mt{font-size:26px;font-weight:800;margin:2px 0 6px}.mli{display:flex;justify-content:space-between;gap:4px;font-size:11.5px;opacity:.92;line-height:1.35}.mli b{font-weight:600;white-space:nowrap}`;document.head.appendChild(st)})();
 
 // ===== v7.1: line-item menu (add/edit) with default bill/crew rates =====
 const DEF_ITEMS=[{desc:'Flat peel-and-stick',unit:'sq',rate:100,crew:60},{desc:'2-story',unit:'sq',rate:5,crew:5},{desc:'Plywood/OSB',unit:'each',rate:15,crew:10},{desc:'Ridge',unit:'bundles',rate:'',crew:''},{desc:'Starter',unit:'bundles',rate:'',crew:''}];
@@ -580,7 +580,7 @@ function pkSheet(inp){const L=pkOpts(inp),H=44,ov=document.createElement('div');
 function pkEnh(root){root.querySelectorAll(PKSEL).forEach(inp=>{if(inp._pk)return;const w=document.createElement('span');w.className='pkw';
  w.innerHTML='<button type="button" class="pkb">−</button><button type="button" class="pkv"></button><button type="button" class="pkb">+</button>';inp.after(w);inp.style.display='none';inp._pk=w.children[1];pkFill(inp);
  const[mi,vb,pl]=w.children;mi.onclick=()=>{const[a,,st]=pkRange(inp);pkSet(inp,Math.max(a,Math.round((num(inp.value)-st)*100)/100));pkLive()};pl.onclick=()=>{const[,,st]=pkRange(inp);pkSet(inp,Math.round((num(inp.value)+st)*100)/100);pkLive()};vb.onclick=()=>pkSheet(inp)})}
-(()=>{const st=document.createElement('style');st.textContent='.pkw .pkv{flex:1;min-width:56px;min-height:40px;font-size:18px;font-weight:700;border-radius:10px}.whov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.35);display:flex;align-items:flex-end}.whs{width:100%;background:rgba(30,30,34,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px 18px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom))}.whd{width:100%;min-height:52px;font-size:20px;font-weight:800;border-radius:14px;background:rgba(201,138,60,.95);color:#1e120a;margin-bottom:8px}.whw{position:relative;height:220px}.whl{height:220px;overflow-y:scroll;scroll-snap-type:y mandatory;padding:88px 0;box-sizing:border-box;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)}.whl::-webkit-scrollbar{display:none}.whi{height:44px;line-height:44px;text-align:center;font-size:22px;color:#fff;opacity:.45;scroll-snap-align:center}.whi.on{opacity:1;font-weight:700}.whband{position:absolute;left:0;right:0;top:88px;height:44px;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3);pointer-events:none}';document.head.appendChild(st)})();
+(()=>{const st=document.createElement('style');st.textContent='.pkw .pkv{flex:1;min-width:56px;min-height:40px;font-size:18px;font-weight:700;border-radius:10px}.whov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.35);display:flex;align-items:flex-end}.whs{width:100%;background:rgba(30,30,34,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px 18px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom))}.whd{width:100%;min-height:52px;font-size:20px;font-weight:800;border-radius:14px;background:linear-gradient(135deg,#38bdf8,#2dd4bf);color:#062a3a;margin-bottom:8px}.whw{position:relative;height:220px}.whl{height:220px;overflow-y:scroll;scroll-snap-type:y mandatory;padding:88px 0;box-sizing:border-box;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)}.whl::-webkit-scrollbar{display:none}.whi{height:44px;line-height:44px;text-align:center;font-size:22px;color:#fff;opacity:.45;scroll-snap-align:center}.whi.on{opacity:1;font-weight:700}.whband{position:absolute;left:0;right:0;top:88px;height:44px;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3);pointer-events:none}';document.head.appendChild(st)})();
 
 // ===== v9: always-visible Ridge cap / Starter bundles + roof sections (Addition) =====
 const SECD=(n,k)=>`${n} – ${k}`,SECK=['squares','ridge cap','starter'];
@@ -609,7 +609,7 @@ function addSection(jid){const j=job(jid)||{};const n=(prompt('Section name','Ad
  if(!have(/ridge/i))m.insertAdjacentHTML('beforeend',mRow({item:'Ridge cap',unit:'bundles',ord:sum(/ridge|hip/i)||'',del:''}));
  if(!have(/starter/i))m.insertAdjacentHTML('beforeend',mRow({item:'Starter',unit:'bundles',ord:sum(/starter/i)||'',del:''}));
  typeof mF==='function'&&mF();pkEnh(frm)}catch(e){console.error('mats ridge/starter',e)}}}
-(()=>{const st=document.createElement('style');st.textContent='.rsbox{border:1px solid rgba(255,210,122,.6);background:rgba(255,210,122,.1);border-radius:12px;padding:8px;margin:8px 0}.rsh{font-weight:800;color:#ffd27a;font-size:15px}.rsl{font-size:14px;font-weight:600;margin:6px 0 2px}.rsrow .lr{gap:6px}';document.head.appendChild(st)})();
+(()=>{const st=document.createElement('style');st.textContent='.rsbox{border:1px solid rgba(125,211,252,.6);background:rgba(125,211,252,.1);border-radius:12px;padding:8px;margin:8px 0}.rsh{font-weight:800;color:#7dd3fc;font-size:15px}.rsl{font-size:14px;font-weight:600;margin:6px 0 2px}.rsrow .lr{gap:6px}';document.head.appendChild(st)})();
 
 // ===== v9.1: background scroll lock while any overlay is open (iOS-safe) =====
 const SL={n:0,y:0};
