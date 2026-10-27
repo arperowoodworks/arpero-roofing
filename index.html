@@ -384,7 +384,7 @@ const f2=n=>String(Math.round(n*100)/100);
 function revTxt(j){const ex=xs(j).filter(x=>num(x.rate));return `billed ${f2(bSq(j))} sq × ${$(myR(j))} = ${$(r2(bSq(j)*myR(j)))}${ex.map(x=>` + ${esc(x.desc||'extra')} ${$(r2(xq(x)*num(x.rate)))}`).join('')}${ex.length?` = <b>${$(calcRev(j))}</b>`:''}`}
 function crewTxt(j){const fx=xs(j).filter(x=>fold(j,x)),nx=xs(j).filter(x=>!fold(j,x)&&num(x.crew)),lo=num(j.leftover)/3,cs=crewSq(j);
  const parts=[`${f2(num(j.squares))} field`].concat(fx.map(x=>`+ ${f2(xq(x))} ${esc((x.desc||'extra').toLowerCase())}`)).concat(lo?[`− ${f2(lo)} leftover`]:[]);
- return `${parts.join(' ')} = <b>${f2(cs)} sq</b> × ${$(crR(j))} = ${$(r2(cs*crR(j)))}${nx.map(x=>` + ${esc(x.desc||'extra')} ${$(r2(xq(x)*num(x.crew)))}`).join('')}${nx.length?` = <b>${$(estPay(j))}</b>`:''}`}
+ return `${parts.join(' ')} = <b>${f2(cs)} sq</b> × ${$(crR(j))} = ${$(r2(cs*crR(j)))}${nx.map(x=>` + ${esc(x.desc||'extra')} ${f2(xq(x))}${x.unit==='sq'?' sq':x.unit==='bundles'?'b':''} × ${$(x.crew)} = ${$(r2(xq(x)*num(x.crew)))}`).join('')}${nx.length?` = <b>${$(estPay(j))}</b>`:''}`}
 function jobMath(j){const q=j.inv&&num(j.inv.total),mm=mismatch(j),pr=profit(j);
  return `<div class="sub" style="margin-top:6px">Revenue: ${num(j.squares)||j.billedSq?revTxt(j):'add squares'}${q?` · QB ${$(q)}`:''}</div><div class="sub">Crew: ${hasPay(j.id)?$(crewCost(j.id))+' (entered) · calc '+crewTxt(j):crewTxt(j)}</div><div class="sub">Expenses ${$(expCost(j.id))} | Profit <b class="${pr<0?'neg':'pos'}">${$(pr)}</b></div>${mm?`<div class="sub neg">⚠️ QB total is ${$(Math.abs(mm))} ${mm>0?'more':'less'} than calculated</div>`:''}`}
 function defLines(j){const nx=xs(j).filter(x=>!fold(j,x)&&num(x.crew));return [{desc:'Crew squares (field + ridge/starter/flat − leftover)',qty:f2(crewSq(j)),rate:crR(j)}].concat(nx.map(x=>({desc:x.desc||'Extra',qty:f2(xq(x)),rate:x.crew})))}
@@ -583,15 +583,15 @@ function pkEnh(root){root.querySelectorAll(PKSEL).forEach(inp=>{if(inp._pk)retur
 (()=>{const st=document.createElement('style');st.textContent='.pkw .pkv{flex:1;min-width:56px;min-height:40px;font-size:18px;font-weight:700;border-radius:10px}.whov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.35);display:flex;align-items:flex-end}.whs{width:100%;background:rgba(30,30,34,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px 18px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom))}.whd{width:100%;min-height:52px;font-size:20px;font-weight:800;border-radius:14px;background:linear-gradient(135deg,#38bdf8,#2dd4bf);color:#062a3a;margin-bottom:8px}.whw{position:relative;height:220px}.whl{height:220px;overflow-y:scroll;scroll-snap-type:y mandatory;padding:88px 0;box-sizing:border-box;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)}.whl::-webkit-scrollbar{display:none}.whi{height:44px;line-height:44px;text-align:center;font-size:22px;color:#fff;opacity:.45;scroll-snap-align:center}.whi.on{opacity:1;font-weight:700}.whband{position:absolute;left:0;right:0;top:88px;height:44px;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3);pointer-events:none}';document.head.appendChild(st)})();
 
 // ===== v9: always-visible Ridge cap / Starter bundles + roof sections (Addition) =====
-const SECD=(n,k)=>`${n} – ${k}`,SECK=['squares','ridge cap','starter'];
+const SECD=(n,k)=>`${n} – ${k}`,SECK=['squares','ridge cap','starter','crew 2-story'];
 function rsLabel(r,txt){const l=document.createElement('div');l.className='rsl';l.textContent=txt;r.prepend(l);r.querySelector('.lr').style.display='none';r.querySelectorAll('.xr,.xc,.lr .s').forEach(e=>e.style.display='none');r.classList.add('rsrow')}
 function rsRow(box,x,label){box.insertAdjacentHTML('beforeend',xRow(x));const r=box.lastElementChild;rsLabel(r,label);return r}
 function rsSection(jx,name,vals,j){const b=document.createElement('div');b.className='rsbox';b.innerHTML=`<div class="rsh">${esc(name)}</div>`;jx.prepend(b);
- rsRow(b,{desc:SECD(name,'squares'),unit:'sq',sq:vals[0]??'',rate:myR(j)||'',crew:''},'Shingles – squares');rsRow(b,{desc:SECD(name,'ridge cap'),unit:'bundles',sq:vals[1]??''},'Ridge cap bundles');rsRow(b,{desc:SECD(name,'starter'),unit:'bundles',sq:vals[2]??''},'Starter bundles');return b}
+ rsRow(b,{desc:SECD(name,'squares'),unit:'sq',sq:vals[0]??'',rate:myR(j)||'',crew:''},'Shingles – squares');rsRow(b,{desc:SECD(name,'ridge cap'),unit:'bundles',sq:vals[1]??''},'Ridge cap bundles');rsRow(b,{desc:SECD(name,'starter'),unit:'bundles',sq:vals[2]??''},'Starter bundles');rsRow(b,{desc:SECD(name,'crew 2-story'),unit:'sq',sq:vals[3]??'',rate:'',crew:C2R()},'Crew 2-story squares (installed)');return b}
 function addSection(jid){const j=job(jid)||{};const n=(prompt('Section name','Addition')||'').trim().replace(/–/g,'-');if(!n)return;const jx=document.getElementById('jx'),main=jx.querySelector('.rsmain');const b=rsSection(jx,n,[],j);main?main.after(b):0;frm.oninput&&frm.oninput()}
 {const _eJ=editJob;editJob=function(id){_eJ(id);try{const j=id?job(id):{};const jx=document.getElementById('jx');if(!jx)return;
  const rows=[...jx.querySelectorAll('.jxr')],get=r=>r.querySelector('.xd').value.trim(),secs={};
- rows.forEach(r=>{const m=get(r).match(/^(.+) – (squares|ridge cap|starter)$/);if(m){(secs[m[1]]=secs[m[1]]||[])[SECK.indexOf(m[2])]=r.querySelector('.xs').value;r.remove()}});
+ rows.forEach(r=>{const m=get(r).match(/^(.+) – (squares|ridge cap|starter|crew 2-story)$/);if(m){(secs[m[1]]=secs[m[1]]||[])[SECK.indexOf(m[2])]=r.querySelector('.xs').value;r.remove()}});
  Object.keys(secs).reverse().forEach(n=>rsSection(jx,n,secs[n],j));
  const main=document.createElement('div');main.className='rsbox rsmain';main.innerHTML='<div class="rsh">Main roof</div><div class="sub">Bundles ÷ 3 = squares for crew pay. Leave blank until you pick a number.</div>';jx.prepend(main);
  [['squares','Shingles – squares (field / crew)'],['billedSq','Shingles – billed squares (with waste)']].forEach(([n,t])=>{const i=frm.querySelector(`input[name=${n}]`),lb=i&&i.closest('label');if(!lb)return;const g=lb.parentNode;[...lb.childNodes].forEach(c=>{if(c.nodeType===3)c.remove()});const d=document.createElement('div');d.className='rsl';d.textContent=t;lb.prepend(d);main.querySelector('.sub').after(lb);if(g&&g.classList.contains('g2')&&!g.querySelector('label'))g.style.display='none'});
@@ -600,6 +600,7 @@ function addSection(jid){const j=job(jid)||{};const n=(prompt('Section name','Ad
  if(rr){main.appendChild(rr);rsLabel(rr,'Ridge cap bundles')}else rsRow(main,{desc:'Ridge',unit:'bundles'},'Ridge cap bundles');
  if(sr){main.appendChild(sr);rsLabel(sr,'Starter bundles')}else rsRow(main,{desc:'Starter',unit:'bundles'},'Starter bundles');
  let dr=[...jx.querySelectorAll('.jxr:not(.rsrow)')].find(r=>/ply|osb|deck/i.test(get(r))&&r.querySelector('.xu').value==='each');const dd=items().find(t=>/ply|osb|deck/i.test(t.desc))||{rate:15,crew:10};
+ let c2=[...jx.querySelectorAll('.jxr:not(.rsrow)')].find(r=>/^crew 2-story$/i.test(get(r)));if(c2){main.appendChild(c2);rsLabel(c2,'Crew 2-story squares (installed)')}else rsRow(main,{desc:'Crew 2-story',unit:'sq',rate:'',crew:C2R()},'Crew 2-story squares (installed)');
  if(dr){main.appendChild(dr);rsLabel(dr,'Decking repairs (sheets)')}else rsRow(main,{desc:'Decking repairs',unit:'each',rate:dd.rate,crew:dd.crew},'Decking repairs (sheets)');
  const bt=document.createElement('div');bt.className='row';bt.innerHTML=`<button type="button" class="p" onclick="addSection('${id||''}')">＋ Add section (e.g. Addition)</button>`;jx.before(bt);
  pkEnh(frm);frm.oninput&&frm.oninput()}catch(e){console.error('sections',e)}}}
@@ -648,4 +649,27 @@ function crewSheet(inp){const L=crewList().concat('＋ Add crew…'),H=44,ov=doc
  const box=document.getElementById('safeList')||m.appendChild(Object.assign(document.createElement('div'),{id:'safeList'}));
  box.innerHTML='<h2>Jobs</h2>'+S.jobs.map(j=>{try{return `<div class="card" onclick="editJob('${j.id}')"><div class="name">${mapA(j.address)}</div><div class="sub">${esc(j.status||'')} · Bill ${$(calcRev(j))} · Pay ${$(estPay(j))}</div></div>`}catch(e2){return `<div class="card">${esc(j.address||'job')}</div>`}}).join('')}catch(e3){}}}}
 R();
+
+// ===== v14: separate crew 2-story squares; clean extra-row layout; full-height sheet =====
+function C2R(){const t=items().find(x=>/(2|two)\s*-?\s*stor/i.test(x.desc||''));return (t&&t.crew!==''&&t.crew!=null)?t.crew:5}
+function revTxt(j){const ex=xs(j).filter(x=>num(x.rate));return `billed ${f2(bSq(j))} sq × ${$(myR(j))} = ${$(r2(bSq(j)*myR(j)))}${ex.map(x=>` + ${esc(x.desc||'extra')}${is2s(x)?` ${f2(bq(j,x))} sq (whole roof incl. flat) × ${$(x.rate)} =`:''} ${$(r2(bq(j,x)*num(x.rate)))}`).join('')}${ex.length?` = <b>${$(calcRev(j))}</b>`:''}`}
+try{if(!S.m34){S.jobs.forEach(j=>{const ex=j.extras||[];if(ex.some(x=>/crew 2-story$/i.test(x.desc||'')))return;
+ ex.filter(x=>is2s(x)&&num(x.rate)&&!/crew/i.test(x.desc||'')).forEach(x=>{if(num(x.crew)){ex.push({desc:'Crew 2-story',unit:'sq',sq:x.sq,rate:'',crew:x.crew});x.crew=0}})});S.m34=1;save()}}catch(e){console.error('m34',e)}
+function xLay(){document.querySelectorAll('#jx .jxr:not(.rsrow):not(.xlay)').forEach(r=>{const lr=r.querySelectorAll(':scope>.lr')[1];if(!lr)return;r.classList.add('xlay');lr.classList.add('xg');
+ const cell=(cls,lab,els)=>{const d=document.createElement('div');d.className='xcell '+cls;d.innerHTML=`<span class="xl">${lab}</span>`;els.filter(Boolean).forEach(e=>d.appendChild(e));return d};
+ const qs=r.querySelector('.xs'),pw=qs&&qs.nextElementSibling&&qs.nextElementSibling.classList.contains('pkw')?qs.nextElementSibling:null,xr=r.querySelector('.xr'),xc=r.querySelector('.xc'),rm=lr.querySelector('button.s');
+ const is2=()=>/(2|two)\s*-?\s*stor/i.test(r.querySelector('.xd').value);
+ lr.append(cell('xqc','Qty',[qs,pw]),cell('','Rate $',[xr]),cell('','Crew $',[xc]));if(rm){rm.classList.add('xrm');lr.append(rm)}})}
+new MutationObserver(xLay).observe(frm,{childList:true,subtree:true});
+(()=>{const st=document.createElement('style');st.textContent=`
+#jx .jxr .lr{flex-wrap:wrap}#jx .jxr .lr>*{min-width:0}#jx .jxr .xd{flex:1 1 140px}#jx .jxr .xu{flex:0 0 110px!important;max-width:40%}
+#jx .xg{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:8px;align-items:end}
+#jx .xcell{display:flex;flex-direction:column;gap:2px;min-width:0}#jx .xqc{grid-column:1/-1}#jx .xl{font-size:12px;font-weight:600;opacity:.8}
+#jx .xcell input{width:100%;min-width:0;max-width:100%;box-sizing:border-box}#jx .xcell .pkw{display:flex;width:100%}#jx .xcell .pkw>*:not(.pkb){flex:1;min-width:0}
+#jx .xrm{width:44px;min-height:44px;padding:0;align-self:end}
+input,select,textarea{box-sizing:border-box;max-width:100%}input[type=file]{font-size:14px!important;min-width:0}
+.rsbox .lr .pkw{width:100%}
+dialog[open]{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100vh;height:100dvh;max-height:100vh;max-height:100dvh;border-radius:0;border:0;box-sizing:border-box;padding:calc(12px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));background:#12263a!important}
+dialog::backdrop{background:#0b1a28}
+#frm{max-width:520px;margin:0 auto}#frm .row{flex-wrap:wrap}#frm .row>button{flex:1 1 auto;min-width:0}`;document.head.appendChild(st)})();
 </script></body></html>
