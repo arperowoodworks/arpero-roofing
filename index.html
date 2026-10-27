@@ -202,7 +202,7 @@ function editSettings(){const st=S.settings;
 open(`<div class="name">Settings — crew pay rates</div><div class="sub">Suggested (Houston avg), edit me. Used to pre-fill crew pay; you can change them on each payment.</div>${LK.filter(x=>x[0]!=='haul').map(([x,d])=>fld('crew_'+x,d+' $'+(SUG[x]!=null?` <small style="color:#ffd27a">(suggested ${SUG[x]})</small>`:''),st.crew[x],'number')).join('')}`,
 v=>{LK.forEach(([k])=>{if(('crew_'+k) in v)st.crew[k]=v['crew_'+k]});st.crewSeeded=1;save()})}
 // --- materials
-const MI=['Shingles','Starter','Hip & ridge','Underlayment / felt','Ice & water','Drip edge','Pipe boots / jacks','1.5" bullet boot (pipe boot)','Vents','Nails','Coil','Caulk','Other'],MU=['bundles','rolls','boxes','pcs'];
+const MI=['Shingles','Starter','Hip & ridge','Underlayment / felt','Ice & water','Drip edge','Pipe boots / jacks','1.5" bullet boot','3" bullet boot','Vents','Nails','Coil','Caulk','Other'],MU=['bundles','rolls','boxes','pcs'];
 function matStat(j){const m=j.mats||[];if(!m.length)return '';return m.some(x=>num(x.del)<num(x.ord))?'Short':'OK'}
 const mRow=m=>`<div class="ln mr"><div class="lr"><select class="mi">${MI.map(x=>`<option ${x===m.item?'selected':''}>${x}</option>`).join('')}</select><select class="mu" style="flex:0 0 96px">${MU.map(x=>`<option ${x===m.unit?'selected':''}>${x}</option>`).join('')}</select><button type="button" class="s" onclick="this.closest('.ln').remove()">✕</button></div>
 <div class="lr"><input class="mo" type="number" inputmode="decimal" placeholder="Needed" value="${esc(m.ord??'')}"><input class="md" type="number" inputmode="decimal" placeholder="Delivered" value="${esc(m.del??'')}"><button type="button" class="s" onclick="tally(this,-1)">−</button><button type="button" class="s p" onclick="tally(this,1)">＋1</button><b class="mf"></b></div></div>`;
@@ -423,7 +423,7 @@ ${t.comps.map(c=>`<div class="lr ac" data-c="${esc(c)}"><span style="flex:1">Arr
 window.tally=function(b,d){const i=b.closest('.lr').querySelector('.md')||b.closest('.ln').querySelector('.md');i.value=Math.max(0,num(i.value)+d);mF();aF()};
 function readAcc(){return [...document.querySelectorAll('#acc .ar')].map(r=>{const got={};r.querySelectorAll('.ac').forEach(c=>{const v=c.querySelector('.md').value;got[c.dataset.c]=v===''?'':+v});return {set:r.querySelector('.as').value,size:r.querySelector('.az').value,qty:r.querySelector('.aq').value===''?'':+r.querySelector('.aq').value,got}}).filter(a=>a.qty!==''||Object.values(a.got).some(v=>v!==''))}
 function readMats(){return [...document.querySelectorAll('#mats .mr')].map(r=>{let u=r.querySelector('.mu').value,o=r.querySelector('.mo').value,d=r.querySelector('.md').value;if(u==='bundles'&&r.querySelector('.mi').value==='Shingles'){const c=x=>x===''?'':Math.round(num(x)/3*100)/100;o=c(o);d=c(d);u='squares'}return {item:r.querySelector('.mi').value,unit:u,ord:o,del:d}})}
-function shortList(j){const L=[];(j.mats||[]).forEach(m=>{const d=r2(num(m.ord)-num(m.del));if(d>0)L.push(`${f2(d)} ${m.unit} ${m.item}`)});
+function shortList(j){const L=[];(j.mats||[]).forEach(m=>{const d=r2(num(m.ord)-num(m.del));if(d>0)L.push(m.unit==='pcs'?`${f2(d)}× ${m.item}`:`${f2(d)} ${m.unit} ${m.item}`)});
  (j.acc||[]).forEach(a=>{const t=setT(a.set),need=num(a.qty),by={};t.comps.forEach(c=>{const miss=need-num((a.got||{})[c]);if(miss>0)(by[miss]=by[miss]||[]).push(c)});
   Object.keys(by).map(Number).sort((x,y)=>y-x).forEach(n=>{const nm=`${n}× ${a.size?a.size+' ':''}${t.name}`;L.push(t.comps.length>1?`${nm} (${by[n].sort().join(', ')})`:nm)})});return L}
 function shortText(j){const L=shortList(j);return `Arpero Roofing — missing materials\nJob: ${j.address}${j.homeowner?' ('+j.homeowner+')':''}\n\n${L.map(x=>'• '+x).join('\n')}\n\nPlease send all in one trip. Thanks — Oscar`}
@@ -543,6 +543,6 @@ function matReq(id){const j=getJob(id),t=shortList(j).length?shortText(j):`Arper
   extras:[{desc:'Ridge',unit:'bundles',sq:7,rate:'',crew:''},{desc:'Starter',unit:'bundles',sq:3,rate:'',crew:''}]});
  save()})();
 (()=>{if(S.importLeafOak2)return;S.importLeafOak2=1;const j=S.jobs.find(j=>/11951\s+leaf\s+oak/i.test(j.address||''));
- if(j){j.mats=j.mats||[];if(!j.mats.some(m=>/bullet boot/i.test(m.item||'')))j.mats.push({item:'1.5" bullet boot (pipe boot)',unit:'pcs',ord:'',del:4})}
+ if(j){j.mats=j.mats||[];if(!j.mats.some(m=>/bullet boot/i.test(m.item||'')))j.mats.push({item:'1.5" bullet boot',unit:'pcs',ord:7,del:4},{item:'3" bullet boot',unit:'pcs',ord:2,del:0})}
  save();R()})();
 </script></body></html>
