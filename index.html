@@ -472,4 +472,11 @@ const mapA=a=>`<a href="https://www.google.com/maps/search/?api=1&query=${encode
 const _R5=R;window.R=function(){let ch=0;S.jobs.forEach(j=>{const n=normAddr(j.address);if(n!==j.address){j.address=n;ch=1}});if(ch)save();return _R5()};
 
 R();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+
+// ===== v6: 2-story billed on billed squares + flat squares (crew side unchanged) =====
+const is2s=x=>x.unit==='sq'&&/(2|two)\s*-?\s*stor/i.test(x.desc||'');
+const isFlat=x=>x.unit==='sq'&&/flat/i.test(x.desc||'');
+function bq(j,x){return is2s(x)?bSq(j)+xs(j).filter(isFlat).reduce((a,y)=>a+num(y.sq),0):xq(x)}
+function calcRev(j){return r2(bSq(j)*myR(j)+xs(j).reduce((a,x)=>a+bq(j,x)*num(x.rate),0))}
+function revTxt(j){const ex=xs(j).filter(x=>num(x.rate));return `billed ${f2(bSq(j))} sq × ${$(myR(j))} = ${$(r2(bSq(j)*myR(j)))}${ex.map(x=>` + ${esc(x.desc||'extra')}${is2s(x)?` (${f2(bq(j,x))} sq incl. flat)`:''} ${$(r2(bq(j,x)*num(x.rate)))}`).join('')}${ex.length?` = <b>${$(calcRev(j))}</b>`:''}`}
 </script></body></html>
