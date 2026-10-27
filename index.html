@@ -202,7 +202,7 @@ function editSettings(){const st=S.settings;
 open(`<div class="name">Settings — crew pay rates</div><div class="sub">Suggested (Houston avg), edit me. Used to pre-fill crew pay; you can change them on each payment.</div>${LK.filter(x=>x[0]!=='haul').map(([x,d])=>fld('crew_'+x,d+' $'+(SUG[x]!=null?` <small style="color:#ffd27a">(suggested ${SUG[x]})</small>`:''),st.crew[x],'number')).join('')}`,
 v=>{LK.forEach(([k])=>{if(('crew_'+k) in v)st.crew[k]=v['crew_'+k]});st.crewSeeded=1;save()})}
 // --- materials
-const MI=['Shingles','Starter','Hip & ridge','Underlayment / felt','Ice & water','Drip edge','Pipe boots / jacks','1.5" bullet boot','2" bullet boot','3" bullet boot','Vents','Nails','Coil','Caulk','Other'],MU=['bundles','rolls','boxes','pcs'];
+const MI=['Shingles','Starter','Ridge cap','Hip & ridge','Underlayment / felt','Ice & water','Drip edge','Pipe boots / jacks','1.5" bullet boot','2" bullet boot','3" bullet boot','Vents','Nails','Coil','Caulk','Other'],MU=['bundles','rolls','boxes','pcs'];
 function matStat(j){const m=j.mats||[];if(!m.length)return '';return m.some(x=>num(x.del)<num(x.ord))?'Short':'OK'}
 const mRow=m=>`<div class="ln mr"><div class="lr"><select class="mi">${MI.map(x=>`<option ${x===m.item?'selected':''}>${x}</option>`).join('')}</select><select class="mu" style="flex:0 0 96px">${MU.map(x=>`<option ${x===m.unit?'selected':''}>${x}</option>`).join('')}</select><button type="button" class="s" onclick="this.closest('.ln').remove()">✕</button></div>
 <div class="lr"><input class="mo" type="number" inputmode="decimal" placeholder="Needed" value="${esc(m.ord??'')}"><input class="md" type="number" inputmode="decimal" placeholder="Delivered" value="${esc(m.del??'')}"><button type="button" class="s" onclick="tally(this,-1)">−</button><button type="button" class="s p" onclick="tally(this,1)">＋1</button><b class="mf"></b></div></div>`;
@@ -581,6 +581,31 @@ function pkEnh(root){root.querySelectorAll(PKSEL).forEach(inp=>{if(inp._pk)retur
  w.innerHTML='<button type="button" class="pkb">−</button><button type="button" class="pkv"></button><button type="button" class="pkb">+</button>';inp.after(w);inp.style.display='none';inp._pk=w.children[1];pkFill(inp);
  const[mi,vb,pl]=w.children;mi.onclick=()=>{const[a,,st]=pkRange(inp);pkSet(inp,Math.max(a,Math.round((num(inp.value)-st)*100)/100));pkLive()};pl.onclick=()=>{const[,,st]=pkRange(inp);pkSet(inp,Math.round((num(inp.value)+st)*100)/100);pkLive()};vb.onclick=()=>pkSheet(inp)})}
 (()=>{const st=document.createElement('style');st.textContent='.pkw .pkv{flex:1;min-width:56px;min-height:40px;font-size:18px;font-weight:700;border-radius:10px}.whov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.35);display:flex;align-items:flex-end}.whs{width:100%;background:rgba(30,30,34,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px 18px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom))}.whd{width:100%;min-height:52px;font-size:20px;font-weight:800;border-radius:14px;background:rgba(201,138,60,.95);color:#1e120a;margin-bottom:8px}.whw{position:relative;height:220px}.whl{height:220px;overflow-y:scroll;scroll-snap-type:y mandatory;padding:88px 0;box-sizing:border-box;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)}.whl::-webkit-scrollbar{display:none}.whi{height:44px;line-height:44px;text-align:center;font-size:22px;color:#fff;opacity:.45;scroll-snap-align:center}.whi.on{opacity:1;font-weight:700}.whband{position:absolute;left:0;right:0;top:88px;height:44px;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3);pointer-events:none}';document.head.appendChild(st)})();
+
+// ===== v9: always-visible Ridge cap / Starter bundles + roof sections (Addition) =====
+const SECD=(n,k)=>`${n} – ${k}`,SECK=['squares','ridge cap','starter'];
+function rsLabel(r,txt){const l=document.createElement('div');l.className='rsl';l.textContent=txt;r.prepend(l);r.querySelector('.lr').style.display='none';r.querySelectorAll('.xr,.xc,.lr .s').forEach(e=>e.style.display='none');r.classList.add('rsrow')}
+function rsRow(box,x,label){box.insertAdjacentHTML('beforeend',xRow(x));const r=box.lastElementChild;rsLabel(r,label);return r}
+function rsSection(jx,name,vals,j){const b=document.createElement('div');b.className='rsbox';b.innerHTML=`<div class="rsh">${esc(name)}</div>`;jx.prepend(b);
+ rsRow(b,{desc:SECD(name,'squares'),unit:'sq',sq:vals[0]??'',rate:myR(j)||'',crew:''},'Field squares');rsRow(b,{desc:SECD(name,'ridge cap'),unit:'bundles',sq:vals[1]??''},'Ridge cap bundles');rsRow(b,{desc:SECD(name,'starter'),unit:'bundles',sq:vals[2]??''},'Starter bundles');return b}
+function addSection(jid){const j=job(jid)||{};const n=(prompt('Section name','Addition')||'').trim().replace(/–/g,'-');if(!n)return;const jx=document.getElementById('jx'),main=jx.querySelector('.rsmain');const b=rsSection(jx,n,[],j);main?main.after(b):0;frm.oninput&&frm.oninput()}
+{const _eJ=editJob;editJob=function(id){_eJ(id);try{const j=id?job(id):{};const jx=document.getElementById('jx');if(!jx)return;
+ const rows=[...jx.querySelectorAll('.jxr')],get=r=>r.querySelector('.xd').value.trim(),secs={};
+ rows.forEach(r=>{const m=get(r).match(/^(.+) – (squares|ridge cap|starter)$/);if(m){(secs[m[1]]=secs[m[1]]||[])[SECK.indexOf(m[2])]=r.querySelector('.xs').value;r.remove()}});
+ Object.keys(secs).reverse().forEach(n=>rsSection(jx,n,secs[n],j));
+ const main=document.createElement('div');main.className='rsbox rsmain';main.innerHTML='<div class="rsh">Main roof</div><div class="sub">Field squares are above. Bundles ÷ 3 = squares for crew pay.</div>';jx.prepend(main);
+ const pick=re=>[...jx.querySelectorAll('.jxr:not(.rsrow)')].find(r=>re.test(get(r))&&r.querySelector('.xu').value==='bundles');
+ let rr=pick(/^(ridge|hip)/i),sr=pick(/^starter/i);
+ if(rr){main.appendChild(rr);rsLabel(rr,'Ridge cap bundles')}else rsRow(main,{desc:'Ridge',unit:'bundles'},'Ridge cap bundles');
+ if(sr){main.appendChild(sr);rsLabel(sr,'Starter bundles')}else rsRow(main,{desc:'Starter',unit:'bundles'},'Starter bundles');
+ const bt=document.createElement('div');bt.className='row';bt.innerHTML=`<button type="button" class="p" onclick="addSection('${id||''}')">＋ Add section (e.g. Addition)</button>`;jx.before(bt);
+ pkEnh(frm);frm.oninput&&frm.oninput()}catch(e){console.error('sections',e)}}}
+{const _eM=editMats;editMats=function(jid){_eM(jid);try{const j=getJob(jid),m=document.getElementById('mats');if(!m)return;const ex=j.extras||[],sum=re=>ex.filter(x=>x.unit==='bundles'&&re.test(x.desc||'')).reduce((a,x)=>a+num(x.sq),0);
+ const have=re=>[...m.querySelectorAll('.mi')].some(s=>re.test(s.value));
+ if(!have(/ridge/i))m.insertAdjacentHTML('beforeend',mRow({item:'Ridge cap',unit:'bundles',ord:sum(/ridge|hip/i)||'',del:''}));
+ if(!have(/starter/i))m.insertAdjacentHTML('beforeend',mRow({item:'Starter',unit:'bundles',ord:sum(/starter/i)||'',del:''}));
+ typeof mF==='function'&&mF();pkEnh(frm)}catch(e){console.error('mats ridge/starter',e)}}}
+(()=>{const st=document.createElement('style');st.textContent='.rsbox{border:1px solid rgba(255,210,122,.6);background:rgba(255,210,122,.1);border-radius:12px;padding:8px;margin:8px 0}.rsh{font-weight:800;color:#ffd27a;font-size:15px}.rsl{font-size:14px;font-weight:600;margin:6px 0 2px}.rsrow .lr{gap:6px}';document.head.appendChild(st)})();
 
 // ===== v8.2: safe boot — render only after all code is loaded; never blank the list =====
 {const _Rs=R;R=function(){try{return _Rs()}catch(e){console.error('render',e);try{const m=document.querySelector('main')||document.getElementById('app')||document.body;
