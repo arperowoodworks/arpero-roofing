@@ -561,4 +561,24 @@ function pkEnh(root){root.querySelectorAll(PKSEL).forEach(inp=>{if(inp._pk)retur
  root.querySelectorAll('.xu,.mu,select[name=unit],.xd,.mi').forEach(x=>{if(x._pkU)return;x._pkU=1;x.addEventListener('change',()=>{const r=x.closest('.ln')||x.closest('form');r&&r.querySelectorAll(PKSEL).forEach(pkFill)})})}
 new MutationObserver(()=>pkEnh(frm)).observe(frm,{childList:true,subtree:true});
 (()=>{const st=document.createElement('style');st.textContent='.pkw{display:inline-flex;align-items:center;gap:4px;flex:1;min-width:0}.pkw .pks{flex:1;min-width:52px;min-height:40px;font-size:17px;text-align:center;text-align-last:center}.pkw .pkb{min-width:40px;min-height:40px;font-size:20px;padding:0;border-radius:10px}label .pkw{display:flex;margin-top:4px}';document.head.appendChild(st)})();
+
+// ===== v8.1: iOS-style snap wheel sheet, big Done at top, saves immediately =====
+let LIVE=null;{const _o=open;open=function(h,onSave,onDel){LIVE=(onDel||/^<div class="name">Materials/.test(h))?onSave:null;return _o(h,onSave,onDel)}}
+function pkOpts(inp){const[a,b,st]=pkRange(inp),L=[''];for(let x=a;x<=b+1e-9;x=Math.round((x+st)*100)/100)L.push(String(x));const v=inp.value;if(v!==''&&!L.includes(String(+v)))L.push(String(+v));return L.concat('Other…')}
+function pkFill(inp){const b=inp._pk;if(b)b.textContent=inp.value===''?'–':inp.value}
+function pkLive(){if(!LIVE)return;try{LIVE(Object.fromEntries(new FormData(frm)));R()}catch(e){}}
+function pkSet(inp,v){inp.value=v;inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}));pkFill(inp)}
+function pkSheet(inp){const L=pkOpts(inp),H=44,ov=document.createElement('div');ov.className='whov';
+ ov.innerHTML=`<div class="whs"><button type="button" class="whd">Done</button><div class="whw"><div class="whband"></div><div class="whl">${L.map(x=>`<div class="whi">${x===''?'–':esc(x)}</div>`).join('')}</div></div></div>`;
+ dlg.appendChild(ov);const l=ov.querySelector('.whl'),cur=Math.max(0,L.indexOf(inp.value===''?'':String(+inp.value)));l.scrollTop=cur*H;
+ const hl=()=>{const i=Math.round(l.scrollTop/H);l.querySelectorAll('.whi').forEach((e,k)=>e.classList.toggle('on',k===i))};l.onscroll=hl;hl();
+ l.querySelectorAll('.whi').forEach((e,k)=>e.onclick=()=>l.scrollTo({top:k*H,behavior:'smooth'}));
+ const done=()=>{const i=Math.min(L.length-1,Math.round(l.scrollTop/H));let v=L[i];ov.remove();
+  if(v==='Other…'){const t=prompt('Enter amount',inp.value);if(t===null||t.trim()===''||isNaN(+t))return;v=String(+t)}
+  pkSet(inp,v);pkLive();const all=[...frm.querySelectorAll('.pkv')],n=all[all.indexOf(inp._pk)+1];n&&n.focus()};
+ ov.querySelector('.whd').onclick=done;ov.onclick=e=>{if(e.target===ov)done()}}
+function pkEnh(root){root.querySelectorAll(PKSEL).forEach(inp=>{if(inp._pk)return;const w=document.createElement('span');w.className='pkw';
+ w.innerHTML='<button type="button" class="pkb">−</button><button type="button" class="pkv"></button><button type="button" class="pkb">+</button>';inp.after(w);inp.style.display='none';inp._pk=w.children[1];pkFill(inp);
+ const[mi,vb,pl]=w.children;mi.onclick=()=>{const[a,,st]=pkRange(inp);pkSet(inp,Math.max(a,Math.round((num(inp.value)-st)*100)/100));pkLive()};pl.onclick=()=>{const[,,st]=pkRange(inp);pkSet(inp,Math.round((num(inp.value)+st)*100)/100);pkLive()};vb.onclick=()=>pkSheet(inp)})}
+(()=>{const st=document.createElement('style');st.textContent='.pkw .pkv{flex:1;min-width:56px;min-height:40px;font-size:18px;font-weight:700;border-radius:10px}.whov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.35);display:flex;align-items:flex-end}.whs{width:100%;background:rgba(30,30,34,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px 18px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom))}.whd{width:100%;min-height:52px;font-size:20px;font-weight:800;border-radius:14px;background:rgba(201,138,60,.95);color:#1e120a;margin-bottom:8px}.whw{position:relative;height:220px}.whl{height:220px;overflow-y:scroll;scroll-snap-type:y mandatory;padding:88px 0;box-sizing:border-box;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)}.whl::-webkit-scrollbar{display:none}.whi{height:44px;line-height:44px;text-align:center;font-size:22px;color:#fff;opacity:.45;scroll-snap-align:center}.whi.on{opacity:1;font-weight:700}.whband{position:absolute;left:0;right:0;top:88px;height:44px;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3);pointer-events:none}';document.head.appendChild(st)})();
 </script></body></html>
