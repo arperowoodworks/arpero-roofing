@@ -536,4 +536,10 @@ function copyTA(id,btn){const ta=document.getElementById(id),v=ta.value,ok=()=>{
 // ===== v7.4: materials request text (draft only, never sent) =====
 function matReq(id){const j=getJob(id),t=shortList(j).length?shortText(j):`Arpero Roofing — ${j.address}\n\nNothing short.`;
  open(`<div class="name">Shortage text — ${esc(j.address)}</div><div class="sub">Draft only. Edit it, then copy it or open Messages. Nothing is sent by the app.</div><textarea id="mrq" rows="12" style="width:100%">${esc(t)}</textarea><div class="row"><button type="button" class="p" style="font-size:17px;padding:12px 18px;flex:1" onclick="copyTA('mrq',this)">📋 Copy</button><a class="s" style="display:inline-block;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.2);color:#fff;text-decoration:none" href="#" onclick="this.href='sms:&body='+encodeURIComponent(document.getElementById('mrq').value)">💬 Open in Messages</a></div>`,()=>{})}
+
+// ===== v7.6: one-time Leaf Oak import (current job) =====
+(()=>{if(S.importLeafOak1)return;S.importLeafOak1=1;
+ if(!S.jobs.some(j=>/11951\s+leaf\s+oak/i.test(j.address||'')))S.jobs.push({id:uid(),address:'11951 Leaf Oak Dr, Houston, TX 77065',gc:'Advantage Living',crew:'Eduardo',start:'2026-10-27',billDate:'2026-10-27',status:'In progress',stories:'',squares:32,billedSq:32,leftover:'',myRate:'',crewRate:'',
+  extras:[{desc:'Ridge',unit:'bundles',sq:7,rate:'',crew:''},{desc:'Starter',unit:'bundles',sq:3,rate:'',crew:''}]});
+ save();R()})();
 </script></body></html>
