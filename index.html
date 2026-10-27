@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Arpero Roofing"><meta name="theme-color" content="#14282b">
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon-180.png"><link rel="apple-touch-icon" href="icon-180.png">
+<title>Arpero Roofing</title>
+<style>
+*{box-sizing:border-box}html{background:#2a1a10 linear-gradient(160deg,#4a2c17,#1f3a3a 60%,#14282b) fixed;-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;padding:env(safe-area-inset-top) 12px calc(110px + env(safe-area-inset-bottom));overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-20%;z-index:-1;background:radial-gradient(circle at 15% 15%,#c98a3c 0,transparent 45%),radial-gradient(circle at 85% 35%,#0f5257 0,transparent 50%),radial-gradient(circle at 30% 85%,#0b3b40 0,transparent 50%),radial-gradient(circle at 80% 90%,#8a4f22 0,transparent 45%),linear-gradient(160deg,#4a2c17,#1f3a3a 60%,#14282b);filter:blur(30px)}
+h1{font-size:22px;margin:0}h2{font-size:17px;margin:18px 0 8px}h1,h2,h3,summary{text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.card,.tot div,dialog{background:rgba(30,20,12,.72);border:1px solid rgba(255,255,255,.25);border-radius:20px;box-shadow:0 8px 28px rgba(0,0,0,.28);color:#fff}
+.card{padding:12px;margin:10px 0}.top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.name{font-size:17px;font-weight:700}.sub{font-size:14px;color:rgba(255,255,255,.78)}
+.tot{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.tot div{padding:10px;text-align:center;font-size:13px}.tot b{display:block;font-size:20px;color:#ffd27a}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+button{min-height:44px;padding:0 14px;font-size:16px;font-weight:600;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:14px}
+button.p{background:rgba(201,138,60,.85);color:#1e120a;border-color:rgba(255,220,160,.6)}button.d{background:rgba(160,40,30,.35);border-color:rgba(255,120,100,.6);color:#ffd6cf}button.s{min-height:34px;font-size:14px;padding:0 10px}
+.tag{display:inline-block;border-radius:20px;padding:2px 9px;font-size:12px;font-weight:700;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);margin:4px 4px 0 0}
+.tag.g{background:rgba(60,160,110,.5)}.tag.r{color:#ff9a8a;border-color:#ff9a8a}.pos{color:#9fe8b0}.neg{color:#ff9a8a}
+dialog{width:94%;max-width:440px;max-height:90vh;overflow:auto;padding:14px}dialog::backdrop{background:rgba(0,0,0,.5)}
+label{display:block;margin:8px 0 2px;font-size:14px}
+input,select,textarea{width:100%;font-size:16px!important;padding:10px;background:rgba(0,0,0,.28);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:12px;font-family:inherit}
+select option{color:#111;background:#fff}::placeholder{color:rgba(255,255,255,.55)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
+.li{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.15);padding:8px 0;font-size:15px}.li:last-child{border:0}.li small{display:block;color:rgba(255,255,255,.7);font-size:12px}
+.ph{color:rgba(255,255,255,.7);font-size:14px;line-height:1.5}
+.fab{position:fixed;right:16px;bottom:calc(92px + env(safe-area-inset-bottom));border-radius:30px;height:56px;font-size:17px;background:rgba(201,138,60,.9);color:#1e120a;box-shadow:0 4px 14px #000a;z-index:50}
+.thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.thumbs img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.3)}
+.ck{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:15px;margin:0}.ck input{width:24px;height:24px;flex:0 0 24px;margin:0}
+.chips{display:flex;gap:6px;overflow-x:auto;margin:6px 0}.chips button{white-space:nowrap;min-height:36px;font-size:14px}.chips button.on{background:rgba(201,138,60,.85);color:#1e120a}
+nav.tabs{position:fixed;left:12px;right:12px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:60;display:flex;border-radius:26px;background:rgba(30,20,12,.82);border:1px solid rgba(255,255,255,.28);box-shadow:0 10px 30px rgba(0,0,0,.35);padding:6px 4px}
+nav.tabs button{flex:1;min-width:0;background:none;border:0;color:rgba(255,255,255,.65);padding:4px 0;font-size:11px;font-weight:500;min-height:0;border-radius:0}
+nav.tabs button.on{color:#fff;font-weight:600}nav.tabs .tic{display:block;margin:0 auto 2px;width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}nav.tabs button.on .tic{stroke:#ffcf8a;stroke-width:2}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+.card,.tot div,dialog{background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%)}
+dialog{background:rgba(40,30,22,.85)}
+nav.tabs{background:rgba(35,24,16,.55);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%)}}
+</style></head><body>
+<header style="display:flex;align-items:center;gap:12px;margin:14px 0 6px"><img src="logo.png" alt="Arpero Roofing" style="height:56px;width:56px;object-fit:contain;background:#fff;border-radius:12px;padding:3px"><h1>Arpero Roofing</h1></header>
+<main id="main"></main>
+<button class="fab" id="fab" onclick="fabAct()">＋ Job</button>
+<nav class="tabs">
+<button data-t="jobs" onclick="tab('jobs')"><svg class="tic" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/></svg>Jobs</button>
+<button data-t="crew" onclick="tab('crew')"><svg class="tic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M16 5a3 3 0 0 1 0 6M18 15c2 .6 3 2.4 3 5"/></svg>Crew Pay</button>
+<button data-t="exp" onclick="tab('exp')"><svg class="tic" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Expenses</button>
+<button data-t="dash" onclick="tab('dash')"><svg class="tic" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Dashboard</button>
+<button data-t="safe" onclick="tab('safe')"><svg class="tic" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>Safety</button>
+</nav>
+<dialog id="dlg"><form method="dialog" id="frm"></form></dialog>
+<script>
+const K='arperoRoofing1';
+let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+S=Object.assign({jobs:[],pay:[],exp:[],safety:[],crews:[]},S||{});
+const save=()=>{S.updatedAt=Date.now();localStorage.setItem(K,JSON.stringify(S))};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const TODAY=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const $=n=>((+n||0)<0?'-':'')+'$'+(Math.round(Math.abs(+n||0)*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const job=id=>S.jobs.find(j=>j.id===id);const jn=id=>{const j=job(id);return j?j.address:'(no job)'};
+const STAT=['Lead','Scheduled','In progress','Done','Paid'];
+const ECAT=['Dumpster','Fuel','Materials','Other'];
+const SAFE=[['Fall protection',['Harness, lanyard and rope grab inspected (no cuts, frays, bad hardware)','Roof anchor installed into framing before work starts','Every worker above 6 ft tied off or protected','Roof edges, skylights and openings marked or covered','Toe boards / roof jacks set on steep pitches']],
+['Ladder',['Ladder inspected (rails, rungs, feet, locks)','Extends 3 ft above the eave and set at 4:1 angle','Tied off or secured at the top, solid level base','3 points of contact, no carrying loads by hand','Kept clear of power lines (10 ft minimum)']],
+['Weather & heat',['Checked forecast: rain, wind, lightning','No roof work in high wind, rain, ice or lightning','Water, shade and rest breaks set up','Crew watching each other for heat illness signs','Open roof covered/dried-in before leaving']],
+['PPE',['Hard hats near the edge and ground drop zone','Safety glasses for nailing and tear-off','Gloves and boots with good grip','Hearing protection near compressors/generators']],
+['Site',['Drop zone taped off, dumpster placed safely','Nail-magnet sweep of yard and driveway','Extension cords and air hoses checked','First aid kit and emergency number on site']]];
+let T=localStorage.roofTab||'jobs',F={job:''};
+function tab(t){T=t;localStorage.roofTab=t;R();scrollTo(0,0)}
+function jobOpts(sel,blank='— pick a job —'){return `<option value="">${blank}</option>`+S.jobs.map(j=>`<option value="${j.id}" ${j.id===sel?'selected':''}>${esc(j.address)}${j.homeowner?' · '+esc(j.homeowner):''}</option>`).join('')}
+// money per job
+function jobPaid(j){return j.status==='Paid'?(+j.amount||0):(+j.received||0)}
+function crewCost(id){return S.pay.filter(p=>p.job===id).reduce((a,p)=>a+(+p.amount||0),0)}
+function expCost(id){return S.exp.filter(e=>e.job===id).reduce((a,e)=>a+(+e.amount||0),0)}
+function profit(j){return (+j.amount||0)-crewCost(j.id)-expCost(j.id)}
+// ---- render
+function R(){document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===T));
+const fab=document.getElementById('fab');fab.style.display=T==='dash'?'none':'';fab.textContent={jobs:'＋ Job',crew:'＋ Payment',exp:'＋ Expense',safe:'＋ Checklist'}[T]||'';
+document.getElementById('main').innerHTML=({jobs:rJobs,crew:rCrew,exp:rExp,dash:rDash,safe:rSafe})[T]()}
+function rJobs(){if(!S.jobs.length)return `<h2>Jobs</h2><div class="card ph">No jobs yet. Tap <b>＋ Job</b> to add your first reroof.</div>`;
+const ord=s=>STAT.indexOf(s);const js=[...S.jobs].sort((a,b)=>ord(a.status)-ord(b.status)||(b.start||'').localeCompare(a.start||''));
+return `<h2>Jobs</h2>`+js.map(j=>{const pr=profit(j);return `<div class="card" onclick="editJob('${j.id}')"><div class="top"><div><div class="name">${esc(j.address)}</div><div class="sub">${esc(j.homeowner||'')}${j.gc?' · '+esc(j.gc):''}</div></div><b>${$(j.amount)}</b></div>
+<div><span class="tag ${j.status==='Paid'?'g':''}">${esc(j.status)}</span>${j.squares?`<span class="tag">${esc(j.squares)} sq</span>`:''}${j.pitch?`<span class="tag">${esc(j.pitch)} pitch</span>`:''}${j.stories?`<span class="tag">${esc(j.stories)} story</span>`:''}</div>
+<div class="sub" style="margin-top:6px">${j.start?'Start '+j.start:''}${j.finish?' · Finish '+j.finish:''}</div>
+<div class="sub">Crew ${$(crewCost(j.id))} · Expenses ${$(expCost(j.id))} · Profit <b class="${pr<0?'neg':'pos'}">${$(pr)}</b></div>
+${j.notes?`<div class="sub" style="margin-top:4px">${esc(j.notes)}</div>`:''}<div class="thumbs" id="th-${j.id}"></div></div>`}).join('')}
+function rCrew(){const y=String(new Date().getFullYear());const yrs=[...new Set(S.pay.map(p=>(p.date||'').slice(0,4)).filter(Boolean).concat(y))].sort().reverse();
+const tot={};S.pay.filter(p=>(p.date||'').startsWith(y)&&p.paid).forEach(p=>tot[p.crew]=(tot[p.crew]||0)+(+p.amount||0));
+const owed=S.pay.filter(p=>!p.paid).reduce((a,p)=>a+(+p.amount||0),0);
+let h=`<h2>Crew pay</h2><div class="tot"><div>Unpaid to crews<b>${$(owed)}</b></div><div>Paid in ${y}<b>${$(Object.values(tot).reduce((a,b)=>a+b,0))}</b></div></div>`;
+h+=`<div class="card"><div class="name">1099 totals by year</div>`+yrs.map(yr=>{const t={};S.pay.filter(p=>(p.date||'').startsWith(yr)&&p.paid).forEach(p=>t[p.crew]=(t[p.crew]||0)+(+p.amount||0));const k=Object.keys(t).sort();
+return `<div class="sub" style="margin-top:8px"><b>${yr}</b></div>`+(k.length?k.map(c=>`<div class="li"><span>${esc(c)}${t[c]>=600?' <span class="tag r">1099 needed</span>':''}</span><b>${$(t[c])}</b></div>`).join(''):'<div class="ph">No paid crew payments.</div>')}).join('')+`<div class="ph" style="margin-top:6px">Totals count paid payments by Zelle date. $600+ in a year usually needs a 1099-NEC.</div></div>`;
+const ps=[...S.pay].sort((a,b)=>(a.paid-b.paid)||(b.date||'').localeCompare(a.date||''));
+h+=ps.length?`<div class="card">`+ps.map(p=>`<div class="li" onclick="editPay('${p.id}')"><span>${esc(p.crew)}<small>${esc(jn(p.job))}${p.date?' · Zelle '+p.date:''}</small></span><span style="text-align:right"><b>${$(p.amount)}</b><br><span class="tag ${p.paid?'g':'r'}">${p.paid?'Paid':'Unpaid'}</span></span></div>`).join('')+`</div>`:`<div class="card ph">No crew payments yet.</div>`;return h}
+function rExp(){const fl=S.exp.filter(e=>!F.job||e.job===F.job).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+let h=`<h2>Expenses</h2><select onchange="F.job=this.value;R()">${jobOpts(F.job,'All jobs')}</select>`;
+const bc={};fl.forEach(e=>bc[e.cat]=(bc[e.cat]||0)+(+e.amount||0));
+h+=`<div class="tot">${ECAT.map(c=>`<div>${c}<b>${$(bc[c]||0)}</b></div>`).join('')}</div>`;
+h+=fl.length?`<div class="card">`+fl.map(e=>`<div class="li" onclick="editExp('${e.id}')"><span>${esc(e.cat)}${e.note?' · '+esc(e.note):''}<small>${esc(jn(e.job))} · ${e.date||''}</small></span><b>${$(e.amount)}</b></div>`).join('')+`</div>`:`<div class="card ph">No expenses yet.</div>`;return h}
+function rDash(){const owedMe=S.jobs.filter(j=>j.status!=='Paid'&&j.status!=='Lead').reduce((a,j)=>a+Math.max(0,(+j.amount||0)-(+j.received||0)),0);
+const owe=S.pay.filter(p=>!p.paid).reduce((a,p)=>a+(+p.amount||0),0);
+const tp=S.jobs.filter(j=>j.status!=='Lead').reduce((a,j)=>a+profit(j),0);
+// month by finish date (or start)
+const m={};const add=(k,f,v)=>{if(!k)return;k=k.slice(0,7);m[k]=m[k]||{inc:0,crew:0,exp:0};m[k][f]+=v};
+S.jobs.filter(j=>j.status!=='Lead').forEach(j=>add(j.finish||j.start,'inc',+j.amount||0));
+S.pay.forEach(p=>add(p.date||(job(p.job)||{}).finish||(job(p.job)||{}).start,'crew',+p.amount||0));
+S.exp.forEach(e=>add(e.date,'exp',+e.amount||0));
+const mk=Object.keys(m).sort().reverse();
+let h=`<h2>Dashboard</h2><div class="tot"><div>Advantage owes you<b>${$(owedMe)}</b></div><div>You owe crews<b>${$(owe)}</b></div><div style="grid-column:span 2">Total profit (all jobs)<b>${$(tp)}</b></div></div>`;
+h+=`<div class="card"><div class="name">Profit by month</div>`+(mk.length?mk.map(k=>{const x=m[k],p=x.inc-x.crew-x.exp;return `<div class="li"><span>${new Date(k+'-15').toLocaleString('en-US',{month:'long',year:'numeric'})}<small>Jobs ${$(x.inc)} · Crew ${$(x.crew)} · Exp ${$(x.exp)}</small></span><b class="${p<0?'neg':'pos'}">${$(p)}</b></div>`}).join(''):'<div class="ph">Add jobs to see monthly profit.</div>')+`</div>`;
+h+=`<div class="card"><div class="name">Profit by job</div>`+(S.jobs.length?S.jobs.map(j=>{const p=profit(j);const owed=j.status==='Paid'?0:Math.max(0,(+j.amount||0)-(+j.received||0));return `<div class="li"><span>${esc(j.address)}<small>${esc(j.status)} · ${$(j.amount)} − crew ${$(crewCost(j.id))} − exp ${$(expCost(j.id))}${owed&&j.status!=='Lead'?' · owed '+$(owed):''}</small></span><b class="${p<0?'neg':'pos'}">${$(p)}</b></div>`}).join(''):'<div class="ph">No jobs yet.</div>')+`</div>`;
+h+=`<div class="card"><div class="name">Export & backup</div><div class="row"><button onclick="csv('jobs')">Jobs CSV</button><button onclick="csv('pay')">Crew pay CSV</button><button onclick="csv('exp')">Expenses CSV</button><button onclick="csv('safety')">Safety CSV</button></div>
+<div class="row"><button class="p" onclick="backup()">Back up everything</button><button onclick="document.getElementById('rf').click()">Restore backup</button></div><input type="file" id="rf" accept=".json,application/json" style="display:none" onchange="restore(this.files[0])">
+<div class="ph" style="margin-top:6px">Data is saved on this phone only. Back up now and then (save the file to Files or iCloud Drive).</div></div>`;return h}
+function rSafe(){const fl=S.safety.filter(s=>!F.job||s.job===F.job).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+let h=`<h2>Daily safety checklist</h2><select onchange="F.job=this.value;R()">${jobOpts(F.job,'All jobs')}</select>`;
+const n=SAFE.reduce((a,s)=>a+s[1].length,0);
+h+=fl.length?fl.map(s=>{const c=Object.values(s.checks||{}).filter(Boolean).length;return `<div class="card" onclick="editSafe('${s.id}')"><div class="top"><div><div class="name">${esc(jn(s.job))}</div><div class="sub">${s.date}${s.crew?' · '+esc(s.crew):''}</div></div><span class="tag ${c===n?'g':'r'}">${c}/${n}</span></div>${s.notes?`<div class="sub">${esc(s.notes)}</div>`:''}</div>`}).join(''):`<div class="card ph">No checklists yet. Tap <b>＋ Checklist</b> each morning before work starts.</div>`;return h}
+// ---- forms
+const dlg=document.getElementById('dlg'),frm=document.getElementById('frm');
+function open(html,onSave,onDel){frm.innerHTML=html+`<div class="row" style="margin-top:12px"><button class="p" value="save">Save</button><button value="cancel" formnovalidate>Cancel</button>${onDel?'<button class="d" value="del" formnovalidate>Delete</button>':''}</div>`;
+dlg.onclose=()=>{if(dlg.returnValue==='save')onSave(Object.fromEntries(new FormData(frm)));else if(dlg.returnValue==='del'&&confirm('Delete this?'))onDel();R()};dlg.returnValue='';dlg.showModal()}
+const fld=(n,l,v,t='text',x='')=>`<label>${l}<input name="${n}" type="${t}" value="${esc(v??'')}" ${t==='number'?'step="any" inputmode="decimal"':''} ${x}></label>`;
+const sel=(n,l,v,o)=>`<label>${l}<select name="${n}">${o.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('')}</select></label>`;
+function fabAct(){({jobs:()=>editJob(),crew:()=>editPay(),exp:()=>editExp(),safe:()=>editSafe()})[T]()}
+function editJob(id){const j=id?job(id):{status:'Scheduled',gc:'Advantage Living'};
+open(`<div class="name">${id?'Edit job':'New job'}</div>${fld('address','Address',j.address,'text','required')}${fld('homeowner','Homeowner',j.homeowner)}${fld('gc','GC',j.gc,'text','list="gcs"')}<datalist id="gcs">${[...new Set(['Advantage Living',...S.jobs.map(x=>x.gc).filter(Boolean)])].map(g=>`<option value="${esc(g)}">`).join('')}</datalist>
+<div class="g2">${fld('squares','Squares',j.squares,'number')}${fld('pitch','Pitch (e.g. 6/12)',j.pitch)}${sel('stories','Stories',j.stories||'1',['1','2','3'])}${sel('status','Status',j.status,STAT)}${fld('start','Start',j.start,'date')}${fld('finish','Finish',j.finish,'date')}${fld('amount','Advantage pays ($)',j.amount,'number')}${fld('received','Received so far ($)',j.received,'number')}</div>
+<label>Notes<textarea name="notes" rows="3">${esc(j.notes||'')}</textarea></label>
+<label>Photos</label><div class="thumbs" id="dth"></div><input type="file" accept="image/*" multiple onchange="addPhotos(this.files)">`,
+v=>{['squares','amount','received'].forEach(k=>v[k]=v[k]===''?'':+v[k]);if(id)Object.assign(j,v);else S.jobs.push(Object.assign({id:uid(),photos:[]},v,{photos:PEND}));if(id)j.photos=PEND;save()},
+id?()=>{S.jobs=S.jobs.filter(x=>x.id!==id);(j.photos||[]).forEach(p=>idb('delete',p));save()}:null);
+PEND=[...(j.photos||[])];showThumbs('dth',PEND,true)}
+let PEND=[];
+function editPay(id){const p=id?S.pay.find(x=>x.id===id):{date:TODAY(),paid:false,job:F.job};const crews=[...new Set(['Kevin','Eduardo Garcia','ESTAR',...S.pay.map(x=>x.crew)])];
+open(`<div class="name">${id?'Edit payment':'New crew payment'}</div>${fld('crew','Crew',p.crew,'text','list="crl" required')}<datalist id="crl">${crews.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+<label>Job<select name="job">${jobOpts(p.job)}</select></label><div class="g2">${fld('amount','Amount ($)',p.amount,'number','required')}${fld('date','Zelle date',p.date,'date')}</div>
+${sel('paid','Status',p.paid?'Paid':'Unpaid',['Unpaid','Paid'])}<label>Note<input name="note" value="${esc(p.note||'')}"></label>`,
+v=>{v.amount=+v.amount||0;v.paid=v.paid==='Paid';if(id)Object.assign(p,v);else S.pay.push(Object.assign({id:uid()},v));save()},id?()=>{S.pay=S.pay.filter(x=>x.id!==id);save()}:null)}
+function editExp(id){const e=id?S.exp.find(x=>x.id===id):{date:TODAY(),cat:'Dumpster',job:F.job};
+open(`<div class="name">${id?'Edit expense':'New expense'}</div>${sel('cat','Type',e.cat,ECAT)}<label>Job<select name="job">${jobOpts(e.job,'— no job —')}</select></label><div class="g2">${fld('amount','Amount ($)',e.amount,'number','required')}${fld('date','Date',e.date,'date')}</div><label>Note<input name="note" value="${esc(e.note||'')}"></label>`,
+v=>{v.amount=+v.amount||0;if(id)Object.assign(e,v);else S.exp.push(Object.assign({id:uid()},v));save()},id?()=>{S.exp=S.exp.filter(x=>x.id!==id);save()}:null)}
+function editSafe(id){const s=id?S.safety.find(x=>x.id===id):{date:TODAY(),job:F.job,checks:{}};let i=0;
+open(`<div class="name">Daily safety checklist</div><label>Job<select name="job" required>${jobOpts(s.job)}</select></label><div class="g2">${fld('date','Date',s.date,'date','required')}${fld('crew','Crew on site',s.crew)}</div>`+
+SAFE.map(([g,items])=>`<h3 style="margin:14px 0 2px;font-size:15px;color:#ffd27a">${g}</h3>`+items.map(t=>{const k='c'+(i++);return `<label class="ck"><input type="checkbox" name="${k}" ${s.checks[k]?'checked':''}><span>${esc(t)}</span></label>`}).join('')).join('')+
+`<div class="row"><button type="button" class="s" onclick="frm.querySelectorAll('.ck input').forEach(c=>c.checked=true)">Check all</button></div><label>Notes / hazards<textarea name="notes" rows="2">${esc(s.notes||'')}</textarea></label>`,
+v=>{const c={};Object.keys(v).filter(k=>/^c\d+$/.test(k)).forEach(k=>c[k]=true);const o={job:v.job,date:v.date,crew:v.crew,notes:v.notes,checks:c};if(id)Object.assign(s,o);else S.safety.push(Object.assign({id:uid()},o));save()},id?()=>{S.safety=S.safety.filter(x=>x.id!==id);save()}:null)}
+// ---- photos (IndexedDB, resized)
+let DB;function idb(op,k,v){return new Promise((res,rej)=>{const go=()=>{const t=DB.transaction('p',op==='get'||op==='getAll'?'readonly':'readwrite').objectStore('p');const r=op==='put'?t.put(v,k):op==='getAll'?t.getAll():t[op](k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)};
+if(DB)return go();const o=indexedDB.open('arperoRoofingPhotos',1);o.onupgradeneeded=()=>o.result.createObjectStore('p');o.onsuccess=()=>{DB=o.result;go()};o.onerror=()=>rej(o.error)})}
+async function addPhotos(fs){for(const f of fs){const d=await shrink(f);const k='ph_'+uid();await idb('put',k,d);PEND.push(k)}showThumbs('dth',PEND,true)}
+function shrink(f){return new Promise(r=>{const i=new Image();i.onload=()=>{const m=1280,s=Math.min(1,m/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*s;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(i.src);r(c.toDataURL('image/jpeg',.75))};i.src=URL.createObjectURL(f)})}
+async function showThumbs(el,keys,del){const e=document.getElementById(el);if(!e)return;e.innerHTML='';for(const k of keys){const d=await idb('get',k);if(!d)continue;const im=document.createElement('img');im.src=d;im.onclick=ev=>{ev.stopPropagation();if(del&&confirm('Remove this photo?')){PEND=PEND.filter(x=>x!==k);idb('delete',k);showThumbs(el,PEND,true)}else if(!del)window.open().document.write('<img src="'+d+'" style="width:100%">')};e.appendChild(im)}}
+const oR=R;R=function(){oR();if(T==='jobs')S.jobs.forEach(j=>(j.photos||[]).length&&showThumbs('th-'+j.id,j.photos))};
+// ---- export
+function dl(name,data,type){const b=new Blob([data],{type}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function csv(w){const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';let rows;
+if(w==='jobs')rows=[['Address','Homeowner','GC','Squares','Pitch','Stories','Start','Finish','Status','Advantage pays','Received','Crew cost','Expenses','Profit','Notes']].concat(S.jobs.map(j=>[j.address,j.homeowner,j.gc,j.squares,j.pitch,j.stories,j.start,j.finish,j.status,j.amount,j.received,crewCost(j.id),expCost(j.id),profit(j),j.notes]));
+if(w==='pay')rows=[['Crew','Job','Amount','Zelle date','Paid','Note']].concat(S.pay.map(p=>[p.crew,jn(p.job),p.amount,p.date,p.paid?'Yes':'No',p.note]));
+if(w==='exp')rows=[['Date','Type','Job','Amount','Note']].concat(S.exp.map(e=>[e.date,e.cat,jn(e.job),e.amount,e.note]));
+if(w==='safety'){const it=SAFE.flatMap(s=>s[1]);rows=[['Date','Job','Crew','Notes',...it]].concat(S.safety.map(s=>[s.date,jn(s.job),s.crew,s.notes,...it.map((_,i)=>s.checks['c'+i]?'Yes':'No')]))}
+dl(`arpero-roofing-${w}-${TODAY()}.csv`,rows.map(r=>r.map(q).join(',')).join('\n'),'text/csv')}
+async function backup(){const ph={};for(const j of S.jobs)for(const k of j.photos||[]){const d=await idb('get',k);if(d)ph[k]=d}dl(`arpero-roofing-backup-${TODAY()}.json`,JSON.stringify({app:'arpero-roofing',v:1,data:S,photos:ph}),'application/json')}
+function restore(f){if(!f)return;const r=new FileReader();r.onload=async()=>{try{const b=JSON.parse(r.result);if(b.app!=='arpero-roofing'||!b.data||!Array.isArray(b.data.jobs))throw 0;if(!confirm('Replace everything on this phone with this backup?'))return;
+for(const k in b.photos||{})await idb('put',k,b.photos[k]);S=Object.assign({jobs:[],pay:[],exp:[],safety:[]},b.data);save();R();alert('Backup restored ✅')}catch(e){alert('That file isn\'t an Arpero Roofing backup.')}};r.readAsText(f)}
+R();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+</script></body></html>
