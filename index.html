@@ -394,5 +394,24 @@ function defLines(j){const nx=xs(j).filter(x=>!fold(j,x)&&num(x.crew));return [{
 const _ep2=editPay;window.editPay=function(id){_ep2(id);const p=id?S.pay.find(x=>x.id===id):null;const a=frm.querySelector('[name=amount]').closest('label');a.insertAdjacentHTML('beforebegin',`<label>Leftover shingle bundles (only if not already in the crew squares; ÷3 × crew rate, subtracted)<input name="leftover" type="number" step="any" inputmode="decimal" value="${esc(p&&p.leftover||'')}" placeholder="0"></label>`);
  const fb=[...frm.querySelectorAll('button')].find(b=>b.textContent.startsWith('Fill from job'));
  const os=dlg.onclose;dlg.onclose=()=>{const lo=frm.querySelector('[name=leftover]').value;os&&os();if(dlg.returnValue==='save'){const q=id?S.pay.find(x=>x.id===id):S.pay[S.pay.length-1];if(q){q.leftover=lo===''?'':+lo;save();R()}}}};
+// ===== v4.4: monthly summary card =====
+let MS=TODAY().slice(0,7);
+const jMo=j=>(j.finish||j.start||(j.inv&&j.inv.date)||TODAY()).slice(0,7);
+function mSum(k){const js=S.jobs.filter(j=>j.status!=='Lead'&&jMo(j)===k),rev=js.reduce((a,j)=>a+income(j),0),crew=js.reduce((a,j)=>a+payroll(j),0);
+ const cats={};S.exp.filter(e=>(e.date||'').slice(0,7)===k).forEach(e=>{const c=e.cat==='Fuel'?'Diesel/Fuel':(e.cat||'Other');cats[c]=(cats[c]||0)+num(e.amount)});
+ const ins=cats.Insurance||0;delete cats.Insurance;const fx=S.settings.fixed.map(f=>({name:f.name||'Fixed',mo:num(f.amount)*(f.freq==='Weekly'?52/12:1)})),fIns=fx.filter(f=>/insur/i.test(f.name)).reduce((a,f)=>a+f.mo,0),fOther=fx.filter(f=>!/insur/i.test(f.name));
+ const exp=Object.values(cats).reduce((a,v)=>a+v,0),fixed=fx.reduce((a,f)=>a+f.mo,0),net=r2(rev-crew-exp-ins-fixed);
+ return {js,rev,crew,cats,exp,ins:ins+fIns,fOther,fixed,net,n:js.length,avgJob:js.length?r2(js.reduce((a,j)=>a+profit(j),0)/js.length):0,netPer:js.length?r2(net/js.length):0}}
+function msGo(d){const [y,m]=MS.split('-').map(Number),t=new Date(y,m-1+d,1);MS=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0');R()}
+function rMonth(){const x=mSum(MS),L=(a,b,c='')=>`<div class="li"><span>${a}</span><b class="${c}">${b}</b></div>`,order=['Landfill','Diesel/Fuel','Materials','Tools','Dumpster','Truck/Trailer','Other'],ks=order.concat(Object.keys(x.cats).filter(c=>!order.includes(c)));
+ return `<div class="card"><div class="top"><button class="s" onclick="msGo(-1)">‹</button><div class="name" style="text-align:center;flex:1">${new Date(MS+'-15').toLocaleString('en-US',{month:'long',year:'numeric'})} summary</div><button class="s" onclick="msGo(1)">›</button></div>
+ <div style="text-align:center;margin:10px 0"><div class="sub">Net profit</div><div style="font-size:34px;font-weight:800" class="${x.net<0?'neg':'pos'}">${$(x.net)}</div><span class="tag" style="font-size:16px;padding:6px 14px;background:${x.net>0?'#1f9d55':'#c53030'};color:#fff">${x.net>0?'✅ Profitable':'⚠️ Losing money'}</span></div>
+ ${L('Jobs this month',x.n)}${L('Total revenue',$(x.rev),'pos')}${L('Crew labor',`− ${$(x.crew)}`)}
+ <div class="sub" style="margin-top:6px">Expenses by category (job + overhead)</div>${ks.map(c=>L('&nbsp; '+c,`− ${$(x.cats[c]||0)}`)).join('')}
+ ${L('Insurance (monthly)',`− ${$(x.ins)}`)}${x.fOther.map(f=>L('&nbsp; '+esc(f.name)+' (fixed)',`− ${$(r2(f.mo))}`)).join('')}
+ ${L('Avg profit per job (before fixed)',$(x.avgJob))}${L('Net per job (after everything)',$(x.netPer))}
+ <div class="ph" style="margin-top:6px">Is roofing worth it this month next to engineering and woodworking? Net ${$(x.net)} from ${x.n} job${x.n===1?'':'s'}.</div></div>`}
+const _rdB=rDash;window.rDash=function(){return _rdB().replace('<h2>Dashboard</h2>','<h2>Dashboard</h2>'+rMonth())};
+
 R();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
 </script></body></html>
