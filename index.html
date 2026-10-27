@@ -36,8 +36,14 @@ nav.tabs button.on{color:#fff;font-weight:600}nav.tabs .tic{display:block;margin
 .card,.tot div,dialog{background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%)}
 dialog{background:rgba(40,30,22,.85)}
 nav.tabs{background:rgba(35,24,16,.55);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%)}}
+.ln{border-bottom:1px solid rgba(255,255,255,.15);padding:6px 0}.lr{display:flex;gap:6px;align-items:center;margin-top:4px}.lr input,.lr select{min-width:0;flex:1;padding:8px}.lr .a{flex:0 0 74px;text-align:right;font-size:14px}.lr .mf{flex:0 0 auto;margin:0}
+#invv{position:fixed;inset:0;z-index:100;overflow:auto;background:#eee;padding:calc(12px + env(safe-area-inset-top)) 12px 30px}#invv .inv{background:#fff;color:#111;border-radius:12px;padding:18px;font-size:14px;max-width:720px;margin:auto}
+.inv .ih{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:10px}.inv .ih img{height:80px}.inv .ic{display:flex;justify-content:space-between;gap:12px;margin-top:12px}
+.inv table{width:100%;border-collapse:collapse;margin-top:8px}.inv th{text-align:left;border-bottom:2px solid #111;padding:6px 4px;font-size:13px}.inv td{padding:6px 4px;border-bottom:1px solid #ddd}.inv th:not(:first-child),.inv td:not(:first-child){text-align:right;white-space:nowrap}.inv .t td{border:0;font-weight:700}.inv .t.g td{font-size:17px;border-top:2px solid #111}
+#invv button{color:#111;background:#fff;border-color:#999}#invv button.p{background:#c98a3c}
+@media print{body>*:not(#invv){display:none!important}body::before{display:none}html,body{background:#fff!important;padding:0}#invv{position:static;background:#fff;padding:0}.noprint{display:none!important}#invv .inv{border-radius:0;padding:0}}
 </style></head><body>
-<header style="display:flex;align-items:center;gap:12px;margin:14px 0 6px"><img src="logo.png" alt="Arpero Roofing" style="height:56px;width:56px;object-fit:contain;background:#fff;border-radius:12px;padding:3px"><h1>Arpero Roofing</h1></header>
+<header style="display:flex;align-items:center;gap:12px;margin:14px 0 6px"><img src="logo.png" alt="Arpero Roofing" style="height:56px;width:56px;object-fit:contain;background:#fff;border-radius:12px;padding:3px"><h1>Arpero Roofing</h1><button class="s" style="margin-left:auto" onclick="editSettings()" aria-label="Settings">⚙️</button></header><div id="invv" hidden></div>
 <main id="main"></main>
 <button class="fab" id="fab" onclick="fabAct()">＋ Job</button>
 <nav class="tabs">
@@ -162,6 +168,113 @@ if(w==='safety'){const it=SAFE.flatMap(s=>s[1]);rows=[['Date','Job','Crew','Note
 dl(`arpero-roofing-${w}-${TODAY()}.csv`,rows.map(r=>r.map(q).join(',')).join('\n'),'text/csv')}
 async function backup(){const ph={};for(const j of S.jobs)for(const k of j.photos||[]){const d=await idb('get',k);if(d)ph[k]=d}dl(`arpero-roofing-backup-${TODAY()}.json`,JSON.stringify({app:'arpero-roofing',v:1,data:S,photos:ph}),'application/json')}
 function restore(f){if(!f)return;const r=new FileReader();r.onload=async()=>{try{const b=JSON.parse(r.result);if(b.app!=='arpero-roofing'||!b.data||!Array.isArray(b.data.jobs))throw 0;if(!confirm('Replace everything on this phone with this backup?'))return;
-for(const k in b.photos||{})await idb('put',k,b.photos[k]);S=Object.assign({jobs:[],pay:[],exp:[],safety:[]},b.data);save();R();alert('Backup restored ✅')}catch(e){alert('That file isn\'t an Arpero Roofing backup.')}};r.readAsText(f)}
+for(const k in b.photos||{})await idb('put',k,b.photos[k]);S=Object.assign({jobs:[],pay:[],exp:[],safety:[]},b.data);S.settings=Object.assign({inv:{},crew:{},billTo:'Advantage Living\n1400 Broadfield Blvd Ste 200\nHouston TX 77084',nextInv:1,period:'Weekly'},S.settings||{});save();R();alert('Backup restored ✅')}catch(e){alert('That file isn\'t an Arpero Roofing backup.')}};r.readAsText(f)}
+function getJob(id){return S.jobs.find(j=>j.id===id)}
+// ===== v2: settings, materials, itemized payroll, invoices =====
+S.settings=Object.assign({inv:{},crew:{},billTo:'Advantage Living\n1400 Broadfield Blvd Ste 200\nHouston TX 77084',nextInv:1,period:'Weekly'},S.settings||{});
+const num=v=>v===''||v==null?0:(+v||0);
+const lt=ls=>(ls||[]).reduce((a,l)=>a+num(l.qty)*num(l.rate),0);
+function income(j){const t=j.inv?lt(j.inv.lines):0;return t?t:num(j.amount)}
+function jobPaidUp(j){return j.status==='Paid'||(j.inv&&j.inv.status==='Paid')}
+function owedBy(j){return j.status==='Lead'||jobPaidUp(j)?0:Math.max(0,income(j)-num(j.received))}
+function profit(j){return income(j)-crewCost(j.id)-expCost(j.id)}
+function payAmt(p){const t=lt(p.lines);return (p.lines&&p.lines.length&&t)?t:num(p.amount)}
+function crewCost(id){return S.pay.filter(p=>p.job===id).reduce((a,p)=>a+payAmt(p),0)}
+const LK=[['sq','Reroof (squares)'],['tear','Tear-off extra layer (squares)'],['steep','Steep / high pitch (squares)'],['story2','2-story (squares)'],['deck','Decking (sheets)'],['ridge','Ridge vent (ft)'],['haul','Dumpster / haul']];
+function defLines(j,kind){const r=S.settings[kind]||{};const ks=kind==='inv'?LK:LK.filter(k=>k[0]!=='haul').concat([['ded','Deduction (enter rate as negative)']]);
+return ks.map(([k,d])=>({desc:d,qty:k==='sq'?(j.squares||''):k==='story2'?(+j.stories>=2?(j.squares||''):''):k==='haul'?1:'',rate:r[k]??''}))}
+const lnRow=l=>`<div class="ln"><input class="d" placeholder="Item" value="${esc(l.desc||'')}"><div class="lr"><input class="q" type="number" step="any" inputmode="decimal" placeholder="Qty" value="${esc(l.qty??'')}"><span>×</span><input class="r" type="number" step="any" inputmode="decimal" placeholder="Rate $" value="${esc(l.rate??'')}"><b class="a"></b><button type="button" class="s" onclick="this.closest('.ln').remove();lnT()">✕</button></div></div>`;
+const linesHTML=(id,ls)=>`<div id="${id}" oninput="lnT()">${(ls||[]).map(lnRow).join('')}</div><div class="row"><button type="button" class="s" onclick="addLn('${id}')">＋ Line</button></div><div class="name" style="margin-top:6px">Total <span id="${id}T"></span></div>`;
+function addLn(id,l){document.getElementById(id).insertAdjacentHTML('beforeend',lnRow(l||{}));lnT()}
+function setLn(id,ls){document.getElementById(id).innerHTML=ls.map(lnRow).join('');lnT()}
+function readLn(id){return [...document.querySelectorAll('#'+id+' .ln')].map(r=>({desc:r.querySelector('.d').value,qty:r.querySelector('.q').value,rate:r.querySelector('.r').value})).filter(l=>l.desc||l.qty||l.rate)}
+function lnT(){frm.querySelectorAll('[id$=T]').forEach(t=>{const id=t.id.slice(0,-1),b=document.getElementById(id);if(!b)return;let s=0;b.querySelectorAll('.ln').forEach(r=>{const a=num(r.querySelector('.q').value)*num(r.querySelector('.r').value);s+=a;r.querySelector('.a').textContent=$(a)});t.textContent=$(s)})}
+// --- settings
+function editSettings(){const st=S.settings,rr=(k,o)=>LK.filter(x=>!(k==='crew'&&x[0]==='haul')).map(([x,d])=>fld(k+'_'+x,d,o[x],'number')).join('');
+open(`<div class="name">Settings — default rates</div><div class="sub">Used to pre-fill new invoices and crew pay. You can change them on each job.</div><h3 style="font-size:15px;color:#ffd27a;margin:12px 0 0">You charge Advantage ($ per unit)</h3>${rr('inv',st.inv)}<h3 style="font-size:15px;color:#ffd27a;margin:12px 0 0">You pay crews ($ per unit)</h3>${rr('crew',st.crew)}
+<label>Invoice bill-to<textarea name="billTo" rows="3">${esc(st.billTo)}</textarea></label>${fld('nextInv','Next invoice #',st.nextInv,'number')}`,
+v=>{LK.forEach(([k])=>{if(('inv_'+k) in v)st.inv[k]=v['inv_'+k];if(('crew_'+k) in v)st.crew[k]=v['crew_'+k]});st.billTo=v.billTo;st.nextInv=+v.nextInv||1;save()})}
+// --- materials
+const MI=['Shingles','Starter','Hip & ridge','Underlayment / felt','Ice & water','Drip edge','Pipe boots / jacks','Vents','Nails','Coil','Caulk','Other'],MU=['bundles','rolls','boxes','pcs'];
+function matStat(j){const m=j.mats||[];if(!m.length)return '';return m.some(x=>num(x.del)<num(x.ord))?'Short':'OK'}
+const mRow=m=>`<div class="ln mr"><div class="lr"><select class="mi">${MI.map(x=>`<option ${x===m.item?'selected':''}>${x}</option>`).join('')}</select><select class="mu" style="flex:0 0 96px">${MU.map(x=>`<option ${x===m.unit?'selected':''}>${x}</option>`).join('')}</select><button type="button" class="s" onclick="this.closest('.ln').remove()">✕</button></div>
+<div class="lr"><input class="mo" type="number" inputmode="decimal" placeholder="Ordered" value="${esc(m.ord??'')}"><input class="md" type="number" inputmode="decimal" placeholder="Delivered" value="${esc(m.del??'')}"><button type="button" class="s" onclick="tally(this,-1)">−</button><button type="button" class="s p" onclick="tally(this,1)">＋1</button><b class="mf"></b></div></div>`;
+function tally(b,d){const i=b.closest('.ln').querySelector('.md');i.value=Math.max(0,num(i.value)+d);mF()}
+function mF(){frm.querySelectorAll('.mr').forEach(r=>{const o=r.querySelector('.mo').value,dl=r.querySelector('.md').value,f=r.querySelector('.mf');if(o===''&&dl===''){f.textContent='';return}const df=num(dl)-num(o);f.className='mf tag '+(df<0?'r':'g');f.textContent=df<0?df+' short':df>0?'+'+df+' over':'✓ OK'})}
+function editMats(jid){const j=job(jid);
+open(`<div class="name">Materials — ${esc(j.address)}</div><div class="g2">${fld('matSupplier','Supplier',j.matSupplier)}${fld('matDate','Delivery date',j.matDate,'date')}</div><div class="sub" style="margin-top:8px">Enter what was ordered, then count on site with ＋1.</div><div id="mats" oninput="mF()" onchange="mF()">${(j.mats||[]).map(mRow).join('')}</div>
+<div class="row"><button type="button" onclick="document.getElementById('mats').insertAdjacentHTML('beforeend',mRow({unit:'bundles'}))">＋ Item</button></div><label>Delivery ticket photo</label><div class="thumbs" id="mth"></div><input type="file" accept="image/*" multiple onchange="addPhotos(this.files,'mth')">`,
+v=>{j.matSupplier=v.matSupplier;j.matDate=v.matDate;j.mats=[...document.querySelectorAll('#mats .mr')].map(r=>({item:r.querySelector('.mi').value,unit:r.querySelector('.mu').value,ord:r.querySelector('.mo').value,del:r.querySelector('.md').value}));j.matTicket=PEND;save()});
+PEND=[...(j.matTicket||[])];showThumbs('mth',PEND,true);mF()}
+async function addPhotos(fs,el='dth'){for(const f of fs){const d=await shrink(f);const k='ph_'+uid();await idb('put',k,d);PEND.push(k)}showThumbs(el,PEND,true)}
+// --- invoice
+function editInv(jid){const j=job(jid),i=j.inv||{no:S.settings.nextInv,date:TODAY(),status:'Draft',billTo:S.settings.billTo,lines:defLines(j,'inv')};
+open(`<div class="name">Invoice — ${esc(j.address)}</div><div class="g2">${fld('no','Invoice #',i.no)}${fld('date','Date',i.date,'date')}${sel('status','Status',i.status,['Draft','Sent','Paid'])}${fld('paidDate','Paid date',i.paidDate,'date')}</div>
+<label>Bill to<textarea name="billTo" rows="3">${esc(i.billTo)}</textarea></label><label>Line items</label>${linesHTML('il',i.lines)}<div class="row"><button type="button" class="s" onclick="if(confirm('Replace lines with defaults from Settings?'))setLn('il',defLines(getJob('${jid}'),'inv'))">Fill from Settings</button></div>
+<label>Notes on invoice<textarea name="notes" rows="2">${esc(i.notes||'')}</textarea></label>`,
+v=>{const isNew=!j.inv;if(v.status==='Paid'&&!v.paidDate)v.paidDate=TODAY();j.inv=Object.assign({},v,{lines:readLn('il')});if(isNew&&String(v.no)===String(S.settings.nextInv))S.settings.nextInv=(+v.no||0)+1;save()});lnT()}
+function viewInv(jid){const j=job(jid),i=j.inv;if(!i)return editInv(jid);const ls=i.lines.filter(l=>num(l.qty)*num(l.rate));const t=lt(i.lines);
+const v=document.getElementById('invv');v.innerHTML=`<div class="noprint row" style="margin:0 0 10px"><button class="p" onclick="print()">Print / Save PDF</button><button onclick="shareInv('${jid}')">Share</button><button onclick="invv.hidden=true">Close</button></div>
+<div class="inv"><div class="ih"><img src="logo.png"><div style="text-align:right"><div style="font-size:24px;font-weight:800">INVOICE</div>#${esc(i.no)}<br>Date: ${esc(i.date)}${i.status==='Paid'?`<br><b>PAID ${esc(i.paidDate||'')}</b>`:''}</div></div>
+<div class="ic"><div><b>Arpero Roofing</b><br>Oscar Jr Arpero<br>(346) 455-2829<br>ArperoRoofing@gmail.com<br>arperoroofing.com</div><div><b>Bill to</b><br>${esc(i.billTo).replace(/\n/g,'<br>')}</div></div>
+<div style="margin:10px 0"><b>Job:</b> ${esc(j.address)}${j.homeowner?' ('+esc(j.homeowner)+')':''}${j.squares?' · '+esc(j.squares)+' sq':''}</div>
+<table><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr>${ls.map(l=>`<tr><td>${esc(l.desc)}</td><td>${esc(l.qty)}</td><td>${$(l.rate)}</td><td>${$(num(l.qty)*num(l.rate))}</td></tr>`).join('')}
+<tr class="t"><td colspan="3">Subtotal</td><td>${$(t)}</td></tr><tr class="t g"><td colspan="3">Total due</td><td>${$(t)}</td></tr></table>${i.notes?`<p>${esc(i.notes)}</p>`:''}<p style="text-align:center;color:#555;margin-top:18px">Thank you for your business!</p></div>`;v.hidden=false;scrollTo(0,0)}
+function shareInv(jid){const j=job(jid),i=j.inv;const txt=`Arpero Roofing — Invoice #${i.no} (${i.date})\nJob: ${j.address}\n`+i.lines.filter(l=>num(l.qty)*num(l.rate)).map(l=>`${l.desc}: ${l.qty} × ${$(l.rate)} = ${$(num(l.qty)*num(l.rate))}`).join('\n')+`\nTotal due: ${$(lt(i.lines))}\n\nOscar Jr Arpero · (346) 455-2829 · ArperoRoofing@gmail.com`;
+if(navigator.share)navigator.share({title:'Invoice #'+i.no,text:txt}).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText(txt);alert('Invoice text copied. For a PDF use Print / Save PDF.')}}
+// --- jobs list (adds materials/invoice/payroll buttons)
+function rJobs(){if(!S.jobs.length)return `<h2>Jobs</h2><div class="card ph">No jobs yet. Tap <b>＋ Job</b> to add your first reroof.</div>`;
+const ord=s=>STAT.indexOf(s);const js=[...S.jobs].sort((a,b)=>ord(a.status)-ord(b.status)||(b.start||'').localeCompare(a.start||''));
+return `<h2>Jobs</h2>`+js.map(j=>{const pr=profit(j),ms=matStat(j),iv=j.inv;return `<div class="card" onclick="editJob('${j.id}')"><div class="top"><div><div class="name">${esc(j.address)}</div><div class="sub">${esc(j.homeowner||'')}${j.gc?' · '+esc(j.gc):''}</div></div><b>${$(income(j))}</b></div>
+<div><span class="tag ${j.status==='Paid'?'g':''}">${esc(j.status)}</span>${j.squares?`<span class="tag">${esc(j.squares)} sq</span>`:''}${j.pitch?`<span class="tag">${esc(j.pitch)} pitch</span>`:''}${j.stories?`<span class="tag">${esc(j.stories)} story</span>`:''}${ms?`<span class="tag ${ms==='OK'?'g':'r'}">Materials ${ms}</span>`:''}${iv?`<span class="tag ${iv.status==='Paid'?'g':''}">Inv #${esc(iv.no)} ${esc(iv.status)}</span>`:''}</div>
+<div class="sub" style="margin-top:6px">${j.start?'Start '+j.start:''}${j.finish?' · Finish '+j.finish:''}</div>
+<div class="sub">Crew ${$(crewCost(j.id))} · Expenses ${$(expCost(j.id))} · Profit <b class="${pr<0?'neg':'pos'}">${$(pr)}</b></div>
+${j.notes?`<div class="sub" style="margin-top:4px">${esc(j.notes)}</div>`:''}<div class="thumbs" id="th-${j.id}"></div>
+<div class="row" onclick="event.stopPropagation()"><button class="s" onclick="editMats('${j.id}')">📦 Materials</button><button class="s" onclick="editInv('${j.id}')">🧾 Invoice</button>${iv?`<button class="s" onclick="viewInv('${j.id}')">View</button>`:''}<button class="s" onclick="F.job='${j.id}';editPay()">👷 Pay crew</button></div></div>`}).join('')}
+// --- crew pay with itemized breakdown
+function editPay(id){const p=id?S.pay.find(x=>x.id===id):{wdate:TODAY(),paid:false,job:F.job,lines:[]};const crews=[...new Set(['Kevin','Eduardo Garcia','ESTAR',...S.pay.map(x=>x.crew)])];
+open(`<div class="name">${id?'Edit payment':'New crew payment'}</div>${fld('crew','Crew',p.crew,'text','list="crl" required')}<datalist id="crl">${crews.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+<label>Job<select name="job" id="pj">${jobOpts(p.job)}</select></label><label>Pay breakdown</label>${linesHTML('pl',p.lines||[])}<div class="row"><button type="button" class="s" onclick="const j=getJob(document.getElementById('pj').value);if(!j)return alert('Pick a job first');setLn('pl',defLines(j,'crew'))">Fill from job + Settings</button></div>
+<div class="g2">${fld('amount','Amount ($) — if no breakdown',p.amount,'number')}${fld('wdate','Work date (pay period)',p.wdate||p.date,'date')}${sel('paid','Status',p.paid?'Paid':'Unpaid',['Unpaid','Paid'])}${fld('date','Zelle date',p.paid?p.date:'','date')}</div><label>Note<input name="note" value="${esc(p.note||'')}"></label>`,
+v=>{v.lines=readLn('pl');const t=lt(v.lines);v.amount=v.lines.length&&t?t:num(v.amount);v.paid=v.paid==='Paid';if(v.paid&&!v.date)v.date=TODAY();if(id)Object.assign(p,v);else S.pay.push(Object.assign({id:uid()},v));save()},id?()=>{S.pay=S.pay.filter(x=>x.id!==id);save()}:null);lnT()}
+function period(){const pd=S.settings.period,a=new Date((F.pd||TODAY())+'T12:00');let s,e;if(pd==='Monthly'){s=new Date(a.getFullYear(),a.getMonth(),1);e=new Date(a.getFullYear(),a.getMonth()+1,0)}else{s=new Date(a);s.setDate(a.getDate()-((a.getDay()+6)%7));if(pd==='Biweekly')s.setDate(s.getDate()-7);e=new Date(s);e.setDate(s.getDate()+(pd==='Biweekly'?13:6))}
+const f=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return [f(s),f(e)]}
+function shiftP(n){const d=new Date((F.pd||TODAY())+'T12:00');if(S.settings.period==='Monthly')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n*(S.settings.period==='Biweekly'?14:7));F.pd=d.toISOString().slice(0,10);R()}
+function markPaid(crew){const [s,e]=period();if(!confirm('Mark all unpaid '+crew+' pay in this period as paid by Zelle today?'))return;S.pay.forEach(p=>{const w=p.wdate||p.date;if(p.crew===crew&&!p.paid&&w>=s&&w<=e){p.paid=true;p.date=TODAY()}});save();R()}
+function rCrew(){const y=String(new Date().getFullYear());const yrs=[...new Set(S.pay.map(p=>(p.date||'').slice(0,4)).filter(Boolean).concat(y))].sort().reverse();
+const tot={};S.pay.filter(p=>(p.date||'').startsWith(y)&&p.paid).forEach(p=>tot[p.crew]=(tot[p.crew]||0)+payAmt(p));
+const owed=S.pay.filter(p=>!p.paid).reduce((a,p)=>a+payAmt(p),0);const [s,e]=period();
+const inP=S.pay.filter(p=>{const w=p.wdate||p.date;return w&&w>=s&&w<=e}),bc={};inP.forEach(p=>{const c=bc[p.crew]=bc[p.crew]||{t:0,u:0,items:[]};c.t+=payAmt(p);if(!p.paid)c.u+=payAmt(p);c.items.push(p)});
+let h=`<h2>Crew pay</h2><div class="tot"><div>Unpaid to crews<b>${$(owed)}</b></div><div>Paid in ${y}<b>${$(Object.values(tot).reduce((a,b)=>a+b,0))}</b></div></div>`;
+h+=`<div class="card"><div class="top"><div class="name">Payroll</div><select style="width:auto" onchange="S.settings.period=this.value;save();R()">${['Weekly','Biweekly','Monthly'].map(x=>`<option ${x===S.settings.period?'selected':''}>${x}</option>`).join('')}</select></div>
+<div class="row" style="align-items:center"><button class="s" onclick="shiftP(-1)">‹</button><b style="flex:1;text-align:center">${s} → ${e}</b><button class="s" onclick="shiftP(1)">›</button></div>`+
+(Object.keys(bc).length?Object.keys(bc).sort().map(c=>`<div style="margin-top:10px"><div class="top"><b>${esc(c)}</b><b>${$(bc[c].t)}</b></div>${bc[c].items.map(p=>`<div class="sub" onclick="editPay('${p.id}')">• ${esc(jn(p.job))}: ${(p.lines||[]).filter(l=>num(l.qty)*num(l.rate)).map(l=>`${esc(l.desc)} ${l.qty}×${$(l.rate)}`).join(', ')||'flat'} = ${$(payAmt(p))} ${p.paid?'<span class="pos">paid '+p.date+'</span>':'<span class="neg">unpaid</span>'}</div>`).join('')}${bc[c].u?`<div class="row"><button class="s p" onclick="markPaid('${esc(c)}')">Mark ${$(bc[c].u)} paid by Zelle today</button></div>`:''}</div>`).join(''):'<div class="ph">No crew pay in this period.</div>')+`</div>`;
+h+=`<div class="card"><div class="name">1099 totals by year</div>`+yrs.map(yr=>{const t={};S.pay.filter(p=>(p.date||'').startsWith(yr)&&p.paid).forEach(p=>t[p.crew]=(t[p.crew]||0)+payAmt(p));const k=Object.keys(t).sort();
+return `<div class="sub" style="margin-top:8px"><b>${yr}</b></div>`+(k.length?k.map(c=>`<div class="li"><span>${esc(c)}${t[c]>=600?' <span class="tag r">1099 needed</span>':''}</span><b>${$(t[c])}</b></div>`).join(''):'<div class="ph">No paid crew payments.</div>')}).join('')+`<div class="ph" style="margin-top:6px">Totals count paid payments by Zelle date. $600+ in a year usually needs a 1099-NEC.</div></div>`;
+const ps=[...S.pay].sort((a,b)=>(a.paid-b.paid)||((b.wdate||b.date||'').localeCompare(a.wdate||a.date||'')));
+h+=ps.length?`<div class="card"><div class="name">All payments</div>`+ps.map(p=>`<div class="li" onclick="editPay('${p.id}')"><span>${esc(p.crew)}<small>${esc(jn(p.job))}${p.paid&&p.date?' · Zelle '+p.date:''}</small></span><span style="text-align:right"><b>${$(payAmt(p))}</b><br><span class="tag ${p.paid?'g':'r'}">${p.paid?'Paid':'Unpaid'}</span></span></div>`).join('')+`</div>`:`<div class="card ph">No crew payments yet.</div>`;return h}
+// --- dashboard (invoice total = income)
+function rDash(){const owedMe=S.jobs.reduce((a,j)=>a+owedBy(j),0),owe=S.pay.filter(p=>!p.paid).reduce((a,p)=>a+payAmt(p),0),tp=S.jobs.filter(j=>j.status!=='Lead').reduce((a,j)=>a+profit(j),0);
+const m={};const add=(k,f,v)=>{if(!k)return;k=k.slice(0,7);m[k]=m[k]||{inc:0,crew:0,exp:0};m[k][f]+=v};
+S.jobs.filter(j=>j.status!=='Lead').forEach(j=>add(j.finish||j.start||(j.inv&&j.inv.date),'inc',income(j)));
+S.pay.forEach(p=>add(p.wdate||p.date||(job(p.job)||{}).finish||(job(p.job)||{}).start,'crew',payAmt(p)));S.exp.forEach(e=>add(e.date,'exp',num(e.amount)));
+const mk=Object.keys(m).sort().reverse();
+let h=`<h2>Dashboard</h2><div class="tot"><div>Advantage owes you<b>${$(owedMe)}</b></div><div>You owe crews<b>${$(owe)}</b></div><div style="grid-column:span 2">Total profit (all jobs)<b>${$(tp)}</b></div></div>`;
+h+=`<div class="card"><div class="name">Profit by month</div>`+(mk.length?mk.map(k=>{const x=m[k],p=x.inc-x.crew-x.exp;return `<div class="li"><span>${new Date(k+'-15').toLocaleString('en-US',{month:'long',year:'numeric'})}<small>Jobs ${$(x.inc)} · Crew ${$(x.crew)} · Exp ${$(x.exp)}</small></span><b class="${p<0?'neg':'pos'}">${$(p)}</b></div>`}).join(''):'<div class="ph">Add jobs to see monthly profit.</div>')+`</div>`;
+h+=`<div class="card"><div class="name">Profit by job</div>`+(S.jobs.length?S.jobs.map(j=>{const p=profit(j),o=owedBy(j);return `<div class="li"><span>${esc(j.address)}<small>${esc(j.status)} · ${j.inv?'invoice':'amount'} ${$(income(j))} − crew ${$(crewCost(j.id))} − exp ${$(expCost(j.id))}${o?' · owed '+$(o):''}</small></span><b class="${p<0?'neg':'pos'}">${$(p)}</b></div>`}).join(''):'<div class="ph">No jobs yet.</div>')+`</div>`;
+h+=`<div class="card"><div class="name">Export & backup</div><div class="row">${[['jobs','Jobs'],['inv','Invoice lines'],['pay','Crew pay'],['payl','Pay breakdown'],['mats','Materials'],['exp','Expenses'],['safety','Safety']].map(([k,l])=>`<button onclick="csv('${k}')">${l} CSV</button>`).join('')}</div>
+<div class="row"><button class="p" onclick="backup()">Back up everything</button><button onclick="document.getElementById('rf').click()">Restore backup</button></div><input type="file" id="rf" accept=".json,application/json" style="display:none" onchange="restore(this.files[0])">
+<div class="row"><button onclick="editSettings()">⚙️ Settings & default rates</button></div><div class="ph" style="margin-top:6px">Data is saved on this phone only. Back up now and then (save the file to Files or iCloud Drive).</div></div>`;return h}
+function csv(w){const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';let rows;
+if(w==='jobs')rows=[['Address','Homeowner','GC','Squares','Pitch','Stories','Start','Finish','Status','Amount (old)','Invoice #','Invoice status','Invoice total','Invoice paid date','Income used','Received','Crew cost','Expenses','Profit','Materials','Notes']].concat(S.jobs.map(j=>[j.address,j.homeowner,j.gc,j.squares,j.pitch,j.stories,j.start,j.finish,j.status,j.amount,j.inv&&j.inv.no,j.inv&&j.inv.status,j.inv?lt(j.inv.lines):'',j.inv&&j.inv.paidDate,income(j),j.received,crewCost(j.id),expCost(j.id),profit(j),matStat(j),j.notes]));
+if(w==='inv')rows=[['Job','Invoice #','Date','Status','Description','Qty','Rate','Amount']].concat(S.jobs.filter(j=>j.inv).flatMap(j=>j.inv.lines.map(l=>[j.address,j.inv.no,j.inv.date,j.inv.status,l.desc,l.qty,l.rate,num(l.qty)*num(l.rate)])));
+if(w==='pay')rows=[['Crew','Job','Work date','Amount','Paid','Zelle date','Breakdown','Note']].concat(S.pay.map(p=>[p.crew,jn(p.job),p.wdate||'',payAmt(p),p.paid?'Yes':'No',p.paid?p.date:'',(p.lines||[]).map(l=>`${l.desc} ${l.qty}x${l.rate}`).join('; '),p.note]));
+if(w==='payl')rows=[['Crew','Job','Work date','Description','Qty','Rate','Amount','Paid']].concat(S.pay.flatMap(p=>(p.lines||[]).map(l=>[p.crew,jn(p.job),p.wdate||p.date,l.desc,l.qty,l.rate,num(l.qty)*num(l.rate),p.paid?'Yes':'No'])));
+if(w==='mats')rows=[['Job','Supplier','Delivery date','Item','Unit','Ordered','Delivered','Difference','Flag']].concat(S.jobs.flatMap(j=>(j.mats||[]).map(m=>{const d=num(m.del)-num(m.ord);return [j.address,j.matSupplier,j.matDate,m.item,m.unit,m.ord,m.del,d,d<0?'Short':d>0?'Over':'OK']})));
+if(w==='exp')rows=[['Date','Type','Job','Amount','Note']].concat(S.exp.map(e=>[e.date,e.cat,jn(e.job),e.amount,e.note]));
+if(w==='safety'){const it=SAFE.flatMap(s=>s[1]);rows=[['Date','Job','Crew','Notes',...it]].concat(S.safety.map(s=>[s.date,jn(s.job),s.crew,s.notes,...it.map((_,i)=>s.checks['c'+i]?'Yes':'No')]))}
+dl(`arpero-roofing-${w}-${TODAY()}.csv`,rows.map(r=>r.map(q).join(',')).join('\n'),'text/csv')}
+async function backup(){const ph={};for(const j of S.jobs)for(const k of [...(j.photos||[]),...(j.matTicket||[])]){const d=await idb('get',k);if(d)ph[k]=d}dl(`arpero-roofing-backup-${TODAY()}.json`,JSON.stringify({app:'arpero-roofing',v:2,data:S,photos:ph}),'application/json')}
+
 R();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
 </script></body></html>
