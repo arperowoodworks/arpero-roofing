@@ -513,7 +513,18 @@ function editItems(){open(`<div class="name">Line item rates</div><div class="su
 // ===== v7.2: bill date =====
 function fmtD(d){if(!d)return 'not set';const [y,m,dd]=d.split('-');return `${+m}/${+dd}/${y.slice(2)}`}
 function editBillDate(id){const j=job(id);open(`<div class="name">Bill date</div><div class="sub">Date on the bill to ${esc(coName(j))} (separate from the job date).</div>${fld('billDate','Bill date',j.billDate||TODAY(),'date')}`,f=>{j.billDate=f.billDate;save()})}
-(()=>{let ch=0;S.jobs.forEach(j=>{if(!j.billDate){j.billDate=/ray falls/i.test(j.address||'')?'2026-10-27':TODAY();ch=1}});if(ch)save();
+(()=>{let ch=0;S.jobs.forEach(j=>{if(!j.billDate){j.billDate=/ray falls/i.test(j.address||'')?'2026-10-19':TODAY();ch=1}});if(ch)save();
  const ns=S.jobs.push.bind(S.jobs);S.jobs.push=(...a)=>{a.forEach(j=>{if(j&&!j.billDate)j.billDate=TODAY()});return ns(...a)};
  const st=document.createElement('style');st.textContent='.mli.bd{background:rgba(255,255,255,.15);border-radius:8px;padding:3px 6px;margin-bottom:4px;opacity:1}';document.head.appendChild(st);R()})();
+
+// ===== v7.3: one-time Ray Falls import + past bills list =====
+(()=>{if(S.importRayFalls1)return;S.importRayFalls1=1;
+ if(!S.jobs.some(j=>/20231\s+ray\s+falls/i.test(j.address||''))){const id=uid();
+  S.jobs.push({id,address:'20231 Ray Falls Dr, Tomball, TX 77375',gc:'Advantage Living',crew:'Eduardo',start:'2026-10-19',finish:'2026-10-19',billDate:'2026-10-19',status:'Paid',stories:2,squares:32,billedSq:33,leftover:2,myRate:'',crewRate:'',
+   extras:[{desc:'Flat peel-and-stick',unit:'sq',sq:1,rate:100,crew:60},{desc:'Ridge',unit:'bundles',sq:8,rate:'',crew:''},{desc:'Starter',unit:'bundles',sq:3,rate:'',crew:''},{desc:'2-story',unit:'sq',sq:32,rate:5,crew:5},{desc:'Plywood/OSB',unit:'each',sq:5,rate:15,crew:10}],
+   notes:'Imported from Oscar\'s pay note: 33sq = 32 field + 1 flat. Paid $3,150. Crew Eduardo $2,370.'});
+  S.exp.push({id:uid(),cat:'Dumpster',job:id,amount:167,date:'2026-10-19',note:'Landfill'},{id:uid(),cat:'Fuel',job:id,amount:130,date:'2026-10-19',note:'Diesel'})}
+ save()})();
+{const _rJ=rJobs;rJobs=function(){let h=_rJ();const pb=S.jobs.filter(j=>j.status==='Paid').sort((a,b)=>(b.billDate||'').localeCompare(a.billDate||''));
+ if(pb.length)h+=`<h2>Past bills</h2>`+pb.map(j=>`<div class="card"><div class="name">${esc(j.address)}</div><div class="sub">📅 Bill ${esc(fmtD(j.billDate))} · Job ${esc(fmtD(j.start))}</div><div class="money"><div class="mc bill"><div class="mh">Bill ${esc(coName(j))}</div><div class="mt">${$(calcRev(j))}</div></div><div class="mc pay"><div class="mh">Pay ${esc(crewName(j))}</div><div class="mt">${$(hasPay(j.id)?crewCost(j.id):estPay(j))}</div></div></div></div>`).join('');return h};R()}
 </script></body></html>
