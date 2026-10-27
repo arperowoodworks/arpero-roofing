@@ -280,7 +280,7 @@ v4mig(S);
 ECAT.length=0;ECAT.push('Landfill','Diesel/Fuel','Materials','Tools','Insurance','Dumpster','Truck/Trailer','Other');
 MU.length=0;MU.push('squares','bundles','rolls','boxes','pcs');
 const myR=j=>num(j.myRate!==''&&j.myRate!=null?j.myRate:S.settings.myRate),crR=j=>num(j.crewRate!==''&&j.crewRate!=null?j.crewRate:S.settings.crewRate);
-const xs=j=>(j.extras||[]).filter(x=>num(x.sq));
+const xs=j=>(j.extras||[]).filter(x=>num(x.sq)).map(x=>((is2bL(x)||isB2R(x))&&x.crew!==0&&(x.crew=0),x));
 const bSq=j=>j.billedSq!==''&&j.billedSq!=null?num(j.billedSq):num(j.squares);
 function calcRev(j){return bSq(j)*myR(j)+xs(j).reduce((a,x)=>a+num(x.sq)*num(x.rate),0)}
 function income(j){const q=j.inv?num(j.inv.total):0;if(q)return q;const c=calcRev(j);return c||num(j.amount)}
@@ -498,7 +498,7 @@ function jobMath(j){const q=j.inv&&num(j.inv.total),mm=mismatch(j),pr=profit(j),
 (()=>{const st=document.createElement('style');st.textContent=`.money{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.mc{border-radius:14px;padding:9px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);min-width:0}.mc.bill{background:rgba(70,105,235,.40);border:1px solid rgba(160,185,255,.8)}.mc.pay{background:rgba(250,135,75,.58);border:1px solid rgba(255,195,160,.85)}.mh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;opacity:.95}.mt{font-size:26px;font-weight:800;margin:2px 0 6px}.mli{display:flex;justify-content:space-between;gap:4px;font-size:11.5px;opacity:.92;line-height:1.35}.mli b{font-weight:600;white-space:nowrap}`;document.head.appendChild(st)})();
 
 // ===== v7.1: line-item menu (add/edit) with default bill/crew rates =====
-const DEF_ITEMS=[{desc:'Flat peel-and-stick',unit:'sq',rate:100,crew:60},{desc:'2-story',unit:'sq',rate:5,crew:5},{desc:'Plywood/OSB',unit:'each',rate:15,crew:10},{desc:'Ridge',unit:'bundles',rate:'',crew:''},{desc:'Starter',unit:'bundles',rate:'',crew:''}];
+const DEF_ITEMS=[{desc:'Flat peel-and-stick',unit:'sq',rate:100,crew:60},{desc:'2-story',unit:'sq',rate:5,crew:0},{desc:'Plywood/OSB',unit:'each',rate:15,crew:10},{desc:'Ridge',unit:'bundles',rate:'',crew:''},{desc:'Starter',unit:'bundles',rate:'',crew:''}];
 function items(){return S.settings.items||DEF_ITEMS}
 function itemMenu(j,side){const ex=(j.extras||[]);return `<select class="imenu" onclick="event.stopPropagation()" onchange="pickItem('${j.id}',this.value);this.value=''"><option value="">＋ Add / edit item ▾</option><optgroup label="Add"><option value="bd">📅 Bill date</option><option value="sh">Shingle squares ($${S.settings.myRate||85}/$${S.settings.crewRate||60})</option>${items().map((t,i)=>`<option value="a${i}">${esc(t.desc)}${t.rate!==''||t.crew!==''?` ($${t.rate||0}/$${t.crew||0})`:''}</option>`).join('')}<option value="c">Custom item…</option></optgroup>${ex.length?`<optgroup label="Edit">${ex.map((x,i)=>`<option value="e${i}">${esc(x.desc||'Extra')} · ${esc(x.sq??'')}</option>`).join('')}</optgroup>`:''}<optgroup label="Rates"><option value="r">⚙️ Default item rates…</option></optgroup></select>`}
 const UO=u=>[['sq','squares'],['bundles','bundles'],['each','each / sheet']].map(([v,l])=>`<option value="${v}" ${v===(u||'each')?'selected':''}>${l}</option>`).join('');
@@ -583,15 +583,15 @@ function pkEnh(root){root.querySelectorAll(PKSEL).forEach(inp=>{if(inp._pk)retur
 (()=>{const st=document.createElement('style');st.textContent='.pkw .pkv{flex:1;min-width:56px;min-height:40px;font-size:18px;font-weight:700;border-radius:10px}.whov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.35);display:flex;align-items:flex-end}.whs{width:100%;background:rgba(30,30,34,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px 18px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom))}.whd{width:100%;min-height:52px;font-size:20px;font-weight:800;border-radius:14px;background:linear-gradient(135deg,#38bdf8,#2dd4bf);color:#062a3a;margin-bottom:8px}.whw{position:relative;height:220px}.whl{height:220px;overflow-y:scroll;scroll-snap-type:y mandatory;padding:88px 0;box-sizing:border-box;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)}.whl::-webkit-scrollbar{display:none}.whi{height:44px;line-height:44px;text-align:center;font-size:22px;color:#fff;opacity:.45;scroll-snap-align:center}.whi.on{opacity:1;font-weight:700}.whband{position:absolute;left:0;right:0;top:88px;height:44px;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3);pointer-events:none}';document.head.appendChild(st)})();
 
 // ===== v9: always-visible Ridge cap / Starter bundles + roof sections (Addition) =====
-const SECD=(n,k)=>`${n} – ${k}`,SECK=['squares','ridge cap','starter','crew 2-story'];
+const SECD=(n,k)=>`${n} – ${k}`,SECK=['squares','ridge cap','starter','crew 2-story','bill 2-story'];
 function rsLabel(r,txt){const l=document.createElement('div');l.className='rsl';l.textContent=txt;r.prepend(l);r.querySelector('.lr').style.display='none';r.querySelectorAll('.xr,.xc,.lr .s').forEach(e=>e.style.display='none');r.classList.add('rsrow')}
 function rsRow(box,x,label){box.insertAdjacentHTML('beforeend',xRow(x));const r=box.lastElementChild;rsLabel(r,label);return r}
 function rsSection(jx,name,vals,j){const b=document.createElement('div');b.className='rsbox';b.innerHTML=`<div class="rsh">${esc(name)}</div>`;jx.prepend(b);
- rsRow(b,{desc:SECD(name,'squares'),unit:'sq',sq:vals[0]??'',rate:myR(j)||'',crew:''},'Shingles – squares');rsRow(b,{desc:SECD(name,'ridge cap'),unit:'bundles',sq:vals[1]??''},'Ridge cap bundles');rsRow(b,{desc:SECD(name,'starter'),unit:'bundles',sq:vals[2]??''},'Starter bundles');rsRow(b,{desc:SECD(name,'crew 2-story'),unit:'sq',sq:vals[3]??'',rate:'',crew:C2R()},'Crew 2-story squares (installed)');return b}
+ rsRow(b,{desc:SECD(name,'squares'),unit:'sq',sq:vals[0]??'',rate:myR(j)||'',crew:''},'Shingles – squares');rsRow(b,{desc:SECD(name,'ridge cap'),unit:'bundles',sq:vals[1]??''},'Ridge cap bundles');rsRow(b,{desc:SECD(name,'starter'),unit:'bundles',sq:vals[2]??''},'Starter bundles');rsRow(b,{desc:SECD(name,'bill 2-story'),unit:'sq',sq:vals[4]??'',rate:'',crew:0},'Bill 2-story squares');rsRow(b,{desc:SECD(name,'crew 2-story'),unit:'sq',sq:vals[3]??'',rate:'',crew:C2R()},'Crew 2-story squares (installed)');return b}
 function addSection(jid){const j=job(jid)||{};const n=(prompt('Section name','Addition')||'').trim().replace(/–/g,'-');if(!n)return;const jx=document.getElementById('jx'),main=jx.querySelector('.rsmain');const b=rsSection(jx,n,[],j);main?main.after(b):0;frm.oninput&&frm.oninput()}
 {const _eJ=editJob;editJob=function(id){_eJ(id);try{const j=id?job(id):{};const jx=document.getElementById('jx');if(!jx)return;
  const rows=[...jx.querySelectorAll('.jxr')],get=r=>r.querySelector('.xd').value.trim(),secs={};
- rows.forEach(r=>{const m=get(r).match(/^(.+) – (squares|ridge cap|starter|crew 2-story)$/);if(m){(secs[m[1]]=secs[m[1]]||[])[SECK.indexOf(m[2])]=r.querySelector('.xs').value;r.remove()}});
+ rows.forEach(r=>{const m=get(r).match(/^(.+) – (squares|ridge cap|starter|crew 2-story|bill 2-story)$/);if(m){(secs[m[1]]=secs[m[1]]||[])[SECK.indexOf(m[2])]=r.querySelector('.xs').value;r.remove()}});
  Object.keys(secs).reverse().forEach(n=>rsSection(jx,n,secs[n],j));
  const main=document.createElement('div');main.className='rsbox rsmain';main.innerHTML='<div class="rsh">Main roof</div><div class="sub">Bundles ÷ 3 = squares for crew pay. Leave blank until you pick a number.</div>';jx.prepend(main);
  [['squares','Shingles – squares (field / crew)'],['billedSq','Shingles – billed squares (with waste)']].forEach(([n,t])=>{const i=frm.querySelector(`input[name=${n}]`),lb=i&&i.closest('label');if(!lb)return;const g=lb.parentNode;[...lb.childNodes].forEach(c=>{if(c.nodeType===3)c.remove()});const d=document.createElement('div');d.className='rsl';d.textContent=t;lb.prepend(d);main.querySelector('.sub').after(lb);if(g&&g.classList.contains('g2')&&!g.querySelector('label'))g.style.display='none'});
@@ -651,7 +651,7 @@ function crewSheet(inp){const L=crewList().concat('＋ Add crew…'),H=44,ov=doc
 R();
 
 // ===== v14: separate crew 2-story squares; clean extra-row layout; full-height sheet =====
-function C2R(){const t=items().find(x=>/(2|two)\s*-?\s*stor/i.test(x.desc||''));return (t&&t.crew!==''&&t.crew!=null)?t.crew:5}
+function C2R(){const v=S.settings.c2r;return (v!==''&&v!=null)?v:5}
 function revTxt(j){const ex=xs(j).filter(x=>num(x.rate));return `billed ${f2(bSq(j))} sq × ${$(myR(j))} = ${$(r2(bSq(j)*myR(j)))}${ex.map(x=>` + ${esc(x.desc||'extra')}${is2s(x)?` ${f2(bq(j,x))} sq (whole roof incl. flat) × ${$(x.rate)} =`:''} ${$(r2(bq(j,x)*num(x.rate)))}`).join('')}${ex.length?` = <b>${$(calcRev(j))}</b>`:''}`}
 try{if(!S.m34){S.jobs.forEach(j=>{const ex=j.extras||[];if(ex.some(x=>/crew 2-story$/i.test(x.desc||'')))return;
  ex.filter(x=>is2s(x)&&num(x.rate)&&!/crew/i.test(x.desc||'')).forEach(x=>{if(num(x.crew)){ex.push({desc:'Crew 2-story',unit:'sq',sq:x.sq,rate:'',crew:x.crew});x.crew=0}})});S.m34=1;save()}}catch(e){console.error('m34',e)}
@@ -672,4 +672,16 @@ input,select,textarea{box-sizing:border-box;max-width:100%}input[type=file]{font
 dialog[open]{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100vh;height:100dvh;max-height:100vh;max-height:100dvh;border-radius:0;border:0;box-sizing:border-box;padding:calc(12px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));background:#12263a!important}
 dialog::backdrop{background:#0b1a28}
 #frm{max-width:520px;margin:0 auto}#frm .row{flex-wrap:wrap}#frm .row>button{flex:1 1 auto;min-width:0}`;document.head.appendChild(st)})();
+
+// ===== v15: one job-wide 2-story bill line; crew paid only on installed 2-story =====
+function isB2R(x){return /bill 2-story$/i.test(x&&x.desc||'')}
+function is2bL(x){return !!x&&is2s(x)&&!/crew 2-story$/i.test(x.desc||'')&&!isB2R(x)}
+function bq(j,x){if(isB2R(x))return 0;if(!is2s(x)||/crew 2-story$/i.test(x.desc||''))return xq(x);
+ const all=xs(j),first=all.find(is2bL);if(x!==first)return 0;
+ return bSq(j)+all.filter(isFlat).reduce((a,y)=>a+num(y.sq),0)+all.filter(isB2R).reduce((a,y)=>a+num(y.sq),0)}
+try{if(!S.m35){(S.settings.items||[]).forEach(t=>{if(t.unit==='sq'&&/(2|two)\s*-?\s*stor/i.test(t.desc||''))t.crew=0});
+ S.jobs.forEach(j=>(j.extras||[]).forEach(x=>{if(is2bL(x)||isB2R(x))x.crew=0}));S.m35=1;save()}}catch(e){console.error('m35',e)}
+function p2i(){return items().findIndex(t=>t.unit==='sq'&&/(2|two)\s*-?\s*stor/i.test(t.desc||''))}
+{const _iM=itemMenu;itemMenu=function(j,side){let h=_iM(j,side);const pi=p2i();if(pi>=0&&(j.extras||[]).some(is2bL))h=h.replace(new RegExp(`<option value="a${pi}">[^<]*</option>`),`<option value="a${pi}">2-story already on this job (edit)</option>`);return h}}
+{const _pI=pickItem;pickItem=function(id,v){const j=job(id);if(j&&v==='a'+p2i()){const k=(j.extras||[]).findIndex(is2bL);if(k>=0){alert('2-story already on this job');v='e'+k}}return _pI(id,v)}}
 </script></body></html>
