@@ -545,4 +545,20 @@ function matReq(id){const j=getJob(id),t=shortList(j).length?shortText(j):`Arper
 (()=>{if(S.importLeafOak3)return;S.importLeafOak3=1;const j=S.jobs.find(j=>/11951\s+leaf\s+oak/i.test(j.address||''));
  if(j){j.mats=j.mats||[];j.mats=j.mats.filter(m=>!/bullet boot/i.test(m.item||''));if(1)j.mats.push({item:'1.5" bullet boot',unit:'pcs',ord:7,del:4},{item:'2" bullet boot',unit:'pcs',ord:3,del:2})}
  save();R()})();
+
+// ===== v8: wheel pickers (native <select> = iOS scroll wheel) + steppers for quantities =====
+function pkRange(inp){const f=inp.closest('form')||document,row=inp.closest('.ln')||f,uS=row.querySelector('.xu,.mu,select[name=unit]'),u=uS?uS.value:'',d=((row.querySelector('.xd,.mi,input[name=desc]')||{}).value||'').toLowerCase();
+ if(['squares','billedSq'].includes(inp.name))return [0,80,1];if(inp.name==='leftover')return [0,30,1];
+ if(/flat|peel/.test(d)&&(u==='sq'||u==='squares'))return [0,20,.5];if(u==='sq'||u==='squares')return [0,80,1];if(u==='bundles')return [0,30,1];return [0,50,1]}
+const PKSEL='input[name=squares],input[name=billedSq],input[name=leftover],input.xs,input.mo,input.md,#frm input[name=sq]';
+function pkFill(inp){const sl=inp._pk;if(!sl)return;const [a,b,st]=pkRange(inp),v=inp.value;let o='<option value="">–</option>';for(let x=a;x<=b+1e-9;x=Math.round((x+st)*100)/100)o+=`<option value="${x}">${x}</option>`;
+ if(v!==''&&!(+v>=a&&+v<=b&&Math.abs(Math.round((v-a)/st)*st+a-v)<1e-9))o+=`<option value="${esc(v)}">${esc(v)}</option>`;o+='<option value="__o">Other…</option>';sl.innerHTML=o;sl.value=v}
+function pkSet(inp,v){inp.value=v;inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}));pkFill(inp)}
+function pkEnh(root){root.querySelectorAll(PKSEL).forEach(inp=>{if(inp._pk)return;const w=document.createElement('span');w.className='pkw';
+ w.innerHTML='<button type="button" class="pkb">−</button><select class="pks"></select><button type="button" class="pkb">+</button>';inp.after(w);inp.style.display='none';inp._pk=w.querySelector('select');pkFill(inp);
+ const[mi,,pl]=w.children;mi.onclick=()=>{const[a,,st]=pkRange(inp);pkSet(inp,Math.max(a,Math.round((num(inp.value)-st)*100)/100))};pl.onclick=()=>{const[,,st]=pkRange(inp);pkSet(inp,Math.round((num(inp.value)+st)*100)/100)};
+ inp._pk.onchange=e=>{e.stopPropagation();let v=inp._pk.value;if(v==='__o'){const t=prompt('Enter amount',inp.value);if(t===null||t.trim()===''||isNaN(+t)){pkFill(inp);return}v=String(+t)}pkSet(inp,v)}});
+ root.querySelectorAll('.xu,.mu,select[name=unit],.xd,.mi').forEach(x=>{if(x._pkU)return;x._pkU=1;x.addEventListener('change',()=>{const r=x.closest('.ln')||x.closest('form');r&&r.querySelectorAll(PKSEL).forEach(pkFill)})})}
+new MutationObserver(()=>pkEnh(frm)).observe(frm,{childList:true,subtree:true});
+(()=>{const st=document.createElement('style');st.textContent='.pkw{display:inline-flex;align-items:center;gap:4px;flex:1;min-width:0}.pkw .pks{flex:1;min-width:52px;min-height:40px;font-size:17px;text-align:center;text-align-last:center}.pkw .pkb{min-width:40px;min-height:40px;font-size:20px;padding:0;border-radius:10px}label .pkw{display:flex;margin-top:4px}';document.head.appendChild(st)})();
 </script></body></html>
