@@ -487,9 +487,9 @@ function crewName(j){const p=S.pay.find(p=>p.job===j.id&&p.crew);return (p&&p.cr
 function coName(j){return (j.gc||String(S.settings.billTo||'Advantage Living').split('\n')[0]||'company').trim()}
 function jobMath(j){const q=j.inv&&num(j.inv.total),mm=mismatch(j),pr=profit(j),has=num(j.squares)||j.billedSq;
  const L=(a,b)=>`<div class="mli"><span>${a}</span><b>${b}</b></div>`;
- const bl=has?[L(`${f2(bSq(j))} sq × ${$(myR(j))}`,$(r2(bSq(j)*myR(j))))].concat(xs(j).filter(x=>num(x.rate)).map(x=>L(`${esc(x.desc||'Extra')} ${f2(bq(j,x))}${x.unit==='bundles'?'b':x.unit==='sq'?' sq':''} × ${$(x.rate)}`,$(r2(bq(j,x)*num(x.rate)))))).join(''):'<div class="mli"><span>add squares</span></div>';
+ const bl=has?[L(`Shingles ${f2(bSq(j))} sq × ${$(myR(j))}`,$(r2(bSq(j)*myR(j))))].concat(xs(j).filter(x=>num(x.rate)).map(x=>L(`${esc(x.desc||'Extra')} ${f2(bq(j,x))}${x.unit==='bundles'?'b':x.unit==='sq'?' sq':''} × ${$(x.rate)}`,$(r2(bq(j,x)*num(x.rate)))))).join(''):'<div class="mli"><span>add squares</span></div>';
  const fx=xs(j).filter(x=>fold(j,x)),nx=xs(j).filter(x=>!fold(j,x)&&num(x.crew)),cs=crewSq(j);
- const pl=[L(`${f2(cs)} sq × ${$(crR(j))}`,$(r2(cs*crR(j))))].concat(nx.map(x=>L(`${esc(x.desc||'Extra')} ${f2(xq(x))}${x.unit==='sq'?' sq':x.unit==='bundles'?'b':''} × ${$(x.crew)}`,$(r2(xq(x)*num(x.crew)))))).join('');
+ const pl=[L(`Shingles + ridge/starter ${f2(cs)} sq × ${$(crR(j))}`,$(r2(cs*crR(j))))].concat(nx.map(x=>L(`${esc(x.desc||'Extra')} ${f2(xq(x))}${x.unit==='sq'?' sq':x.unit==='bundles'?'b':''} × ${$(x.crew)}`,$(r2(xq(x)*num(x.crew)))))).join('');
  const paid=hasPay(j.id)?crewCost(j.id):estPay(j);
  return `<div class="money"><div class="mc bill"><div class="mh">Bill ${esc(coName(j))}</div><div class="mt">${$(calcRev(j))}</div><div class="mli bd" onclick="event.stopPropagation();editBillDate('${j.id}')"><span>📅 Bill date</span><b>${esc(fmtD(j.billDate))} ✎</b></div>${bl}${itemMenu(j,'bill')}${q?`<div class="mli"><span>QB invoice</span><b>${$(q)}</b></div>`:''}</div>
 <div class="mc pay"><div class="mh">Pay ${esc(crewName(j))}</div><div class="mt">${$(paid)}</div>${pl}${itemMenu(j,'pay')}${hasPay(j.id)&&Math.abs(paid-estPay(j))>.01?`<div class="mli"><span>calc</span><b>${$(estPay(j))}</b></div>`:''}</div></div>
@@ -587,13 +587,14 @@ const SECD=(n,k)=>`${n} – ${k}`,SECK=['squares','ridge cap','starter'];
 function rsLabel(r,txt){const l=document.createElement('div');l.className='rsl';l.textContent=txt;r.prepend(l);r.querySelector('.lr').style.display='none';r.querySelectorAll('.xr,.xc,.lr .s').forEach(e=>e.style.display='none');r.classList.add('rsrow')}
 function rsRow(box,x,label){box.insertAdjacentHTML('beforeend',xRow(x));const r=box.lastElementChild;rsLabel(r,label);return r}
 function rsSection(jx,name,vals,j){const b=document.createElement('div');b.className='rsbox';b.innerHTML=`<div class="rsh">${esc(name)}</div>`;jx.prepend(b);
- rsRow(b,{desc:SECD(name,'squares'),unit:'sq',sq:vals[0]??'',rate:myR(j)||'',crew:''},'Field squares');rsRow(b,{desc:SECD(name,'ridge cap'),unit:'bundles',sq:vals[1]??''},'Ridge cap bundles');rsRow(b,{desc:SECD(name,'starter'),unit:'bundles',sq:vals[2]??''},'Starter bundles');return b}
+ rsRow(b,{desc:SECD(name,'squares'),unit:'sq',sq:vals[0]??'',rate:myR(j)||'',crew:''},'Shingles – squares');rsRow(b,{desc:SECD(name,'ridge cap'),unit:'bundles',sq:vals[1]??''},'Ridge cap bundles');rsRow(b,{desc:SECD(name,'starter'),unit:'bundles',sq:vals[2]??''},'Starter bundles');return b}
 function addSection(jid){const j=job(jid)||{};const n=(prompt('Section name','Addition')||'').trim().replace(/–/g,'-');if(!n)return;const jx=document.getElementById('jx'),main=jx.querySelector('.rsmain');const b=rsSection(jx,n,[],j);main?main.after(b):0;frm.oninput&&frm.oninput()}
 {const _eJ=editJob;editJob=function(id){_eJ(id);try{const j=id?job(id):{};const jx=document.getElementById('jx');if(!jx)return;
  const rows=[...jx.querySelectorAll('.jxr')],get=r=>r.querySelector('.xd').value.trim(),secs={};
  rows.forEach(r=>{const m=get(r).match(/^(.+) – (squares|ridge cap|starter)$/);if(m){(secs[m[1]]=secs[m[1]]||[])[SECK.indexOf(m[2])]=r.querySelector('.xs').value;r.remove()}});
  Object.keys(secs).reverse().forEach(n=>rsSection(jx,n,secs[n],j));
- const main=document.createElement('div');main.className='rsbox rsmain';main.innerHTML='<div class="rsh">Main roof</div><div class="sub">Shingles = field squares above. Bundles ÷ 3 = squares for crew pay. Leave blank until you pick a number.</div>';jx.prepend(main);
+ const main=document.createElement('div');main.className='rsbox rsmain';main.innerHTML='<div class="rsh">Main roof</div><div class="sub">Bundles ÷ 3 = squares for crew pay. Leave blank until you pick a number.</div>';jx.prepend(main);
+ [['billedSq','Shingles – billed squares (with waste)'],['squares','Shingles – squares (field / crew)']].forEach(([n,t])=>{const i=frm.querySelector(`input[name=${n}]`),lb=i&&i.closest('label');if(!lb)return;const g=lb.parentNode;[...lb.childNodes].forEach(c=>{if(c.nodeType===3)c.remove()});const d=document.createElement('div');d.className='rsl';d.textContent=t;lb.prepend(d);main.querySelector('.sub').after(lb);if(g&&g.classList.contains('g2')&&!g.querySelector('label'))g.style.display='none'});
  const pick=re=>[...jx.querySelectorAll('.jxr:not(.rsrow)')].find(r=>re.test(get(r))&&r.querySelector('.xu').value==='bundles');
  let rr=pick(/^(ridge|hip)/i),sr=pick(/^starter/i);
  if(rr){main.appendChild(rr);rsLabel(rr,'Ridge cap bundles')}else rsRow(main,{desc:'Ridge',unit:'bundles'},'Ridge cap bundles');
@@ -604,6 +605,7 @@ function addSection(jid){const j=job(jid)||{};const n=(prompt('Section name','Ad
  pkEnh(frm);frm.oninput&&frm.oninput()}catch(e){console.error('sections',e)}}}
 {const _eM=editMats;editMats=function(jid){_eM(jid);try{const j=getJob(jid),m=document.getElementById('mats');if(!m)return;const ex=j.extras||[],sum=re=>ex.filter(x=>x.unit==='bundles'&&re.test(x.desc||'')).reduce((a,x)=>a+num(x.sq),0);
  const have=re=>[...m.querySelectorAll('.mi')].some(s=>re.test(s.value));
+ if(!have(/^shingles$/i))m.insertAdjacentHTML('afterbegin',mRow({item:'Shingles',unit:'bundles',ord:Math.round((bSq(j)+ex.filter(x=>/ – squares$/.test(x.desc||'')).reduce((a,x)=>a+num(x.sq),0))*3)||'',del:''}));
  if(!have(/ridge/i))m.insertAdjacentHTML('beforeend',mRow({item:'Ridge cap',unit:'bundles',ord:sum(/ridge|hip/i)||'',del:''}));
  if(!have(/starter/i))m.insertAdjacentHTML('beforeend',mRow({item:'Starter',unit:'bundles',ord:sum(/starter/i)||'',del:''}));
  typeof mF==='function'&&mF();pkEnh(frm)}catch(e){console.error('mats ridge/starter',e)}}}
