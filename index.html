@@ -473,7 +473,7 @@ function goMap(e,a){e.stopPropagation();if(!/iPhone|iPad|iPod/.test(navigator.us
 const mapA=a=>`<a href="${gDir(a)}" target="_blank" rel="noopener" onclick="return goMap(event,this.dataset.a)" data-a="${esc(a||'')}" style="color:inherit;text-decoration:underline dotted">${esc(a||'')}</a>`;
 const _R5=R;window.R=function(){let ch=0;S.jobs.forEach(j=>{const n=normAddr(j.address);if(n!==j.address){j.address=n;ch=1}});if(ch)save();return _R5()};
 
-R();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
 
 // ===== v6: 2-story billed on billed squares + flat squares (crew side unchanged) =====
 function is2s(x){return x.unit==='sq'&&/(2|two)\s*-?\s*stor/i.test(x.desc||'')}
@@ -495,7 +495,7 @@ function jobMath(j){const q=j.inv&&num(j.inv.total),mm=mismatch(j),pr=profit(j),
 <div class="mc pay"><div class="mh">Pay ${esc(crewName(j))}</div><div class="mt">${$(paid)}</div>${pl}${itemMenu(j,'pay')}${hasPay(j.id)&&Math.abs(paid-estPay(j))>.01?`<div class="mli"><span>calc</span><b>${$(estPay(j))}</b></div>`:''}</div></div>
 <div class="sub" style="font-size:12px">Crew squares: ${crewTxt(j).replace(/ × .*/,'').replace(/<[^>]+>/g,'')}</div>
 <div class="sub">Expenses ${$(expCost(j.id))} | Profit <b class="${pr<0?'neg':'pos'}">${$(pr)}</b></div>${mm?`<div class="sub neg">⚠️ QB total is ${$(Math.abs(mm))} ${mm>0?'more':'less'} than calculated</div>`:''}`}
-(()=>{const st=document.createElement('style');st.textContent=`.money{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.mc{border-radius:14px;padding:9px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);min-width:0}.mc.bill{background:rgba(40,120,220,.35);border:1px solid rgba(120,180,255,.7)}.mc.pay{background:rgba(220,120,30,.38);border:1px solid rgba(255,180,100,.8)}.mh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;opacity:.95}.mt{font-size:26px;font-weight:800;margin:2px 0 6px}.mli{display:flex;justify-content:space-between;gap:4px;font-size:11.5px;opacity:.92;line-height:1.35}.mli b{font-weight:600;white-space:nowrap}`;document.head.appendChild(st);typeof render==='function'&&render()})();
+(()=>{const st=document.createElement('style');st.textContent=`.money{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.mc{border-radius:14px;padding:9px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);min-width:0}.mc.bill{background:rgba(40,120,220,.35);border:1px solid rgba(120,180,255,.7)}.mc.pay{background:rgba(220,120,30,.38);border:1px solid rgba(255,180,100,.8)}.mh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;opacity:.95}.mt{font-size:26px;font-weight:800;margin:2px 0 6px}.mli{display:flex;justify-content:space-between;gap:4px;font-size:11.5px;opacity:.92;line-height:1.35}.mli b{font-weight:600;white-space:nowrap}`;document.head.appendChild(st)})();
 
 // ===== v7.1: line-item menu (add/edit) with default bill/crew rates =====
 const DEF_ITEMS=[{desc:'Flat peel-and-stick',unit:'sq',rate:100,crew:60},{desc:'2-story',unit:'sq',rate:5,crew:5},{desc:'Plywood/OSB',unit:'each',rate:15,crew:10},{desc:'Ridge',unit:'bundles',rate:'',crew:''},{desc:'Starter',unit:'bundles',rate:'',crew:''}];
@@ -515,20 +515,20 @@ function editItems(){open(`<div class="name">Line item rates</div><div class="su
 // ===== v7.2: bill date =====
 function fmtD(d){if(!d)return 'not set';const [y,m,dd]=d.split('-');return `${+m}/${+dd}/${y.slice(2)}`}
 function editBillDate(id){const j=job(id);open(`<div class="name">Bill date</div><div class="sub">Date on the bill to ${esc(coName(j))} (separate from the job date).</div>${fld('billDate','Bill date',j.billDate||TODAY(),'date')}`,f=>{j.billDate=f.billDate;save()})}
-(()=>{let ch=0;S.jobs.forEach(j=>{if(!j.billDate){j.billDate=/ray falls/i.test(j.address||'')?'2026-10-19':TODAY();ch=1}});if(ch)save();
- const ns=S.jobs.push.bind(S.jobs);S.jobs.push=(...a)=>{a.forEach(j=>{if(j&&!j.billDate)j.billDate=TODAY()});return ns(...a)};
- const st=document.createElement('style');st.textContent='.mli.bd{background:rgba(255,255,255,.15);border-radius:8px;padding:3px 6px;margin-bottom:4px;opacity:1}';document.head.appendChild(st);R()})();
+(()=>{try{let ch=0;S.jobs.forEach(j=>{if(!j.billDate){j.billDate=/ray falls/i.test(j.address||'')?'2026-10-19':TODAY();ch=1}});if(ch)save();
+ const ns=S.jobs.push.bind(S.jobs);S.jobs.push=(...a)=>{a.forEach(j=>{if(j&&!j.billDate)j.billDate=TODAY()});return ns(...a)}}catch(e){console.error('billDate migration',e)}
+ const st=document.createElement('style');st.textContent='.mli.bd{background:rgba(255,255,255,.15);border-radius:8px;padding:3px 6px;margin-bottom:4px;opacity:1}';document.head.appendChild(st)})();
 
 // ===== v7.3: one-time Ray Falls import + past bills list =====
-(()=>{if(S.importRayFalls1)return;S.importRayFalls1=1;
+(()=>{try{if(S.importRayFalls1)return;S.importRayFalls1=1;
  if(!S.jobs.some(j=>/20231\s+ray\s+falls/i.test(j.address||''))){const id=uid();
   S.jobs.push({id,address:'20231 Ray Falls Dr, Tomball, TX 77375',gc:'Advantage Living',crew:'Eduardo',start:'2026-10-19',finish:'2026-10-19',billDate:'2026-10-19',status:'Paid',stories:2,squares:32,billedSq:33,leftover:2,myRate:'',crewRate:'',
    extras:[{desc:'Flat peel-and-stick',unit:'sq',sq:1,rate:100,crew:60},{desc:'Ridge',unit:'bundles',sq:8,rate:'',crew:''},{desc:'Starter',unit:'bundles',sq:3,rate:'',crew:''},{desc:'2-story',unit:'sq',sq:32,rate:5,crew:5},{desc:'Plywood/OSB',unit:'each',sq:5,rate:15,crew:10}],
    notes:'Imported from Oscar\'s pay note: 33sq = 32 field + 1 flat. Paid $3,150. Crew Eduardo $2,370.'});
   S.exp.push({id:uid(),cat:'Dumpster',job:id,amount:167,date:'2026-10-19',note:'Landfill'},{id:uid(),cat:'Fuel',job:id,amount:130,date:'2026-10-19',note:'Diesel'})}
- save()})();
+ save()}catch(e){console.error('import',e)}})();
 {const _rJ=rJobs;rJobs=function(){let h=_rJ();const pb=S.jobs.filter(j=>j.status==='Paid').sort((a,b)=>(b.billDate||'').localeCompare(a.billDate||''));
- if(pb.length)h+=`<h2>Past bills</h2>`+pb.map(j=>`<div class="card"><div class="name">${mapA(j.address)}</div><div class="sub">📅 Bill ${esc(fmtD(j.billDate))} · Job ${esc(fmtD(j.start))}</div><div class="money"><div class="mc bill"><div class="mh">Bill ${esc(coName(j))}</div><div class="mt">${$(calcRev(j))}</div></div><div class="mc pay"><div class="mh">Pay ${esc(crewName(j))}</div><div class="mt">${$(hasPay(j.id)?crewCost(j.id):estPay(j))}</div></div></div></div>`).join('');return h};R()}
+ if(pb.length)h+=`<h2>Past bills</h2>`+pb.map(j=>`<div class="card"><div class="name">${mapA(j.address)}</div><div class="sub">📅 Bill ${esc(fmtD(j.billDate))} · Job ${esc(fmtD(j.start))}</div><div class="money"><div class="mc bill"><div class="mh">Bill ${esc(coName(j))}</div><div class="mt">${$(calcRev(j))}</div></div><div class="mc pay"><div class="mh">Pay ${esc(crewName(j))}</div><div class="mt">${$(hasPay(j.id)?crewCost(j.id):estPay(j))}</div></div></div></div>`).join('');return h}}
 
 function copyTA(id,btn){const ta=document.getElementById(id),v=ta.value,ok=()=>{btn.textContent='✓ Copied';setTimeout(()=>btn.textContent='📋 Copy',2000)};
  const fb=()=>{const ro=ta.readOnly;ta.readOnly=false;ta.focus();ta.select();ta.setSelectionRange(0,v.length);let r=false;try{r=document.execCommand('copy')}catch(e){}ta.readOnly=ro;r?ok():(btn.textContent='Select all & copy manually')};
@@ -538,13 +538,13 @@ function matReq(id){const j=getJob(id),t=shortList(j).length?shortText(j):`Arper
  open(`<div class="name">Shortage text — ${esc(j.address)}</div><div class="sub">Draft only. Edit it, then copy it or open Messages. Nothing is sent by the app.</div><textarea id="mrq" rows="12" style="width:100%">${esc(t)}</textarea><div class="row"><button type="button" class="p" style="font-size:17px;padding:12px 18px;flex:1" onclick="copyTA('mrq',this)">📋 Copy</button><a class="s" style="display:inline-block;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.2);color:#fff;text-decoration:none" href="#" onclick="this.href='sms:&body='+encodeURIComponent(document.getElementById('mrq').value)">💬 Open in Messages</a></div>`,()=>{})}
 
 // ===== v7.6: one-time Leaf Oak import (current job) =====
-(()=>{if(S.importLeafOak1)return;S.importLeafOak1=1;
+(()=>{try{if(S.importLeafOak1)return;S.importLeafOak1=1;
  if(!S.jobs.some(j=>/11951\s+leaf\s+oak/i.test(j.address||'')))S.jobs.push({id:uid(),address:'11951 Leaf Oak Dr, Houston, TX 77065',gc:'Advantage Living',crew:'Eduardo',start:'2026-10-27',billDate:'2026-10-27',status:'In progress',stories:'',squares:32,billedSq:32,leftover:'',myRate:'',crewRate:'',
   extras:[{desc:'Ridge',unit:'bundles',sq:7,rate:'',crew:''},{desc:'Starter',unit:'bundles',sq:3,rate:'',crew:''}]});
- save()})();
-(()=>{if(S.importLeafOak3)return;S.importLeafOak3=1;const j=S.jobs.find(j=>/11951\s+leaf\s+oak/i.test(j.address||''));
+ save()}catch(e){console.error('import',e)}})();
+(()=>{try{if(S.importLeafOak3)return;S.importLeafOak3=1;const j=S.jobs.find(j=>/11951\s+leaf\s+oak/i.test(j.address||''));
  if(j){j.mats=j.mats||[];j.mats=j.mats.filter(m=>!/bullet boot/i.test(m.item||''));if(1)j.mats.push({item:'1.5" bullet boot',unit:'pcs',ord:7,del:4},{item:'2" bullet boot',unit:'pcs',ord:3,del:2})}
- save();R()})();
+ save()}catch(e){console.error('import',e)}})();
 
 // ===== v8: wheel pickers (native <select> = iOS scroll wheel) + steppers for quantities =====
 function pkRange(inp){const f=inp.closest('form')||document,row=inp.closest('.ln')||f,uS=row.querySelector('.xu,.mu,select[name=unit]'),u=uS?uS.value:'',d=((row.querySelector('.xd,.mi,input[name=desc]')||{}).value||'').toLowerCase();
@@ -581,4 +581,10 @@ function pkEnh(root){root.querySelectorAll(PKSEL).forEach(inp=>{if(inp._pk)retur
  w.innerHTML='<button type="button" class="pkb">−</button><button type="button" class="pkv"></button><button type="button" class="pkb">+</button>';inp.after(w);inp.style.display='none';inp._pk=w.children[1];pkFill(inp);
  const[mi,vb,pl]=w.children;mi.onclick=()=>{const[a,,st]=pkRange(inp);pkSet(inp,Math.max(a,Math.round((num(inp.value)-st)*100)/100));pkLive()};pl.onclick=()=>{const[,,st]=pkRange(inp);pkSet(inp,Math.round((num(inp.value)+st)*100)/100);pkLive()};vb.onclick=()=>pkSheet(inp)})}
 (()=>{const st=document.createElement('style');st.textContent='.pkw .pkv{flex:1;min-width:56px;min-height:40px;font-size:18px;font-weight:700;border-radius:10px}.whov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.35);display:flex;align-items:flex-end}.whs{width:100%;background:rgba(30,30,34,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px 18px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom))}.whd{width:100%;min-height:52px;font-size:20px;font-weight:800;border-radius:14px;background:rgba(201,138,60,.95);color:#1e120a;margin-bottom:8px}.whw{position:relative;height:220px}.whl{height:220px;overflow-y:scroll;scroll-snap-type:y mandatory;padding:88px 0;box-sizing:border-box;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)}.whl::-webkit-scrollbar{display:none}.whi{height:44px;line-height:44px;text-align:center;font-size:22px;color:#fff;opacity:.45;scroll-snap-align:center}.whi.on{opacity:1;font-weight:700}.whband{position:absolute;left:0;right:0;top:88px;height:44px;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3);pointer-events:none}';document.head.appendChild(st)})();
+
+// ===== v8.2: safe boot — render only after all code is loaded; never blank the list =====
+{const _Rs=R;R=function(){try{return _Rs()}catch(e){console.error('render',e);try{const m=document.querySelector('main')||document.getElementById('app')||document.body;
+ const box=document.getElementById('safeList')||m.appendChild(Object.assign(document.createElement('div'),{id:'safeList'}));
+ box.innerHTML='<h2>Jobs</h2>'+S.jobs.map(j=>{try{return `<div class="card" onclick="editJob('${j.id}')"><div class="name">${mapA(j.address)}</div><div class="sub">${esc(j.status||'')} · Bill ${$(calcRev(j))} · Pay ${$(estPay(j))}</div></div>`}catch(e2){return `<div class="card">${esc(j.address||'job')}</div>`}}).join('')}catch(e3){}}}}
+R();
 </script></body></html>
