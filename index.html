@@ -468,7 +468,9 @@ function normAddr(a){if(!a)return a||'';let t=String(a).replace(/\s+/g,' ').trim
  t=t.replace(/\s*,\s*/g,', ').replace(/([^,\s])\s+([A-Za-z]{2})\s*,?\s*(\d{5}(-\d{4})?)$/,(m,a,b,c)=>`${a}, ${b.toUpperCase()} ${c}`).replace(/,\s*([A-Za-z]{2})\s*,\s*(\d{5})/,(m,b,c)=>`, ${b.toUpperCase()} ${c}`);
  t=t.replace(/\b(Dr|St|Rd|Ln|Ave|Blvd|Ct|Cir|Pkwy|Hwy|Pl|Trl|Ter|Way)\s+(?=[A-Z][a-z]+(\s[A-Z][a-z]+)*,\s[A-Z]{2}\s\d{5}(-\d{4})?$)/,'$1, ');
  return t}
-const mapA=a=>`<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a||'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit;text-decoration:underline dotted">${esc(a||'')}</a>`;
+const gDir=a=>'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(a||'');
+function goMap(e,a){e.stopPropagation();if(!/iPhone|iPad|iPod/.test(navigator.userAgent)&&!(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))return true;e.preventDefault();let gone=false;const v=()=>{if(document.hidden)gone=true};document.addEventListener('visibilitychange',v);location.href='comgooglemaps://?daddr='+encodeURIComponent(a)+'&directionsmode=driving';setTimeout(()=>{document.removeEventListener('visibilitychange',v);if(!gone&&!document.hidden)location.href=gDir(a)},1200);return false}
+const mapA=a=>`<a href="${gDir(a)}" target="_blank" rel="noopener" onclick="return goMap(event,this.dataset.a)" data-a="${esc(a||'')}" style="color:inherit;text-decoration:underline dotted">${esc(a||'')}</a>`;
 const _R5=R;window.R=function(){let ch=0;S.jobs.forEach(j=>{const n=normAddr(j.address);if(n!==j.address){j.address=n;ch=1}});if(ch)save();return _R5()};
 
 R();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
@@ -526,7 +528,7 @@ function editBillDate(id){const j=job(id);open(`<div class="name">Bill date</div
   S.exp.push({id:uid(),cat:'Dumpster',job:id,amount:167,date:'2026-10-19',note:'Landfill'},{id:uid(),cat:'Fuel',job:id,amount:130,date:'2026-10-19',note:'Diesel'})}
  save()})();
 {const _rJ=rJobs;rJobs=function(){let h=_rJ();const pb=S.jobs.filter(j=>j.status==='Paid').sort((a,b)=>(b.billDate||'').localeCompare(a.billDate||''));
- if(pb.length)h+=`<h2>Past bills</h2>`+pb.map(j=>`<div class="card"><div class="name">${esc(j.address)}</div><div class="sub">📅 Bill ${esc(fmtD(j.billDate))} · Job ${esc(fmtD(j.start))}</div><div class="money"><div class="mc bill"><div class="mh">Bill ${esc(coName(j))}</div><div class="mt">${$(calcRev(j))}</div></div><div class="mc pay"><div class="mh">Pay ${esc(crewName(j))}</div><div class="mt">${$(hasPay(j.id)?crewCost(j.id):estPay(j))}</div></div></div></div>`).join('');return h};R()}
+ if(pb.length)h+=`<h2>Past bills</h2>`+pb.map(j=>`<div class="card"><div class="name">${mapA(j.address)}</div><div class="sub">📅 Bill ${esc(fmtD(j.billDate))} · Job ${esc(fmtD(j.start))}</div><div class="money"><div class="mc bill"><div class="mh">Bill ${esc(coName(j))}</div><div class="mt">${$(calcRev(j))}</div></div><div class="mc pay"><div class="mh">Pay ${esc(crewName(j))}</div><div class="mt">${$(hasPay(j.id)?crewCost(j.id):estPay(j))}</div></div></div></div>`).join('');return h};R()}
 
 function copyTA(id,btn){const ta=document.getElementById(id),v=ta.value,ok=()=>{btn.textContent='✓ Copied';setTimeout(()=>btn.textContent='📋 Copy',2000)};
  const fb=()=>{const ro=ta.readOnly;ta.readOnly=false;ta.focus();ta.select();ta.setSelectionRange(0,v.length);let r=false;try{r=document.execCommand('copy')}catch(e){}ta.readOnly=ro;r?ok():(btn.textContent='Select all & copy manually')};
