@@ -18,7 +18,7 @@ button{min-height:44px;padding:0 14px;font-size:16px;font-weight:600;background:
 button.p{background:rgba(201,138,60,.85);color:#1e120a;border-color:rgba(255,220,160,.6)}button.d{background:rgba(160,40,30,.35);border-color:rgba(255,120,100,.6);color:#ffd6cf}button.s{min-height:34px;font-size:14px;padding:0 10px}
 .tag{display:inline-block;border-radius:20px;padding:2px 9px;font-size:12px;font-weight:700;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);margin:4px 4px 0 0}
 .tag.g{background:rgba(60,160,110,.5)}.tag.r{color:#ff9a8a;border-color:#ff9a8a}.pos{color:#9fe8b0}.neg{color:#ff9a8a}
-dialog{width:94%;max-width:440px;max-height:90vh;overflow:auto;padding:14px}dialog::backdrop{background:rgba(0,0,0,.5)}
+dialog{width:94%;max-width:440px;max-height:90vh;max-height:90dvh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:14px}dialog::backdrop{background:rgba(0,0,0,.5)}
 label{display:block;margin:8px 0 2px;font-size:14px}
 input,select,textarea{width:100%;font-size:16px!important;padding:10px;background:rgba(0,0,0,.28);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:12px;font-family:inherit}
 select option{color:#111;background:#fff}::placeholder{color:rgba(255,255,255,.55)}
@@ -606,6 +606,17 @@ function addSection(jid){const j=job(jid)||{};const n=(prompt('Section name','Ad
  if(!have(/starter/i))m.insertAdjacentHTML('beforeend',mRow({item:'Starter',unit:'bundles',ord:sum(/starter/i)||'',del:''}));
  typeof mF==='function'&&mF();pkEnh(frm)}catch(e){console.error('mats ridge/starter',e)}}}
 (()=>{const st=document.createElement('style');st.textContent='.rsbox{border:1px solid rgba(255,210,122,.6);background:rgba(255,210,122,.1);border-radius:12px;padding:8px;margin:8px 0}.rsh{font-weight:800;color:#ffd27a;font-size:15px}.rsl{font-size:14px;font-weight:600;margin:6px 0 2px}.rsrow .lr{gap:6px}';document.head.appendChild(st)})();
+
+// ===== v9.1: background scroll lock while any overlay is open (iOS-safe) =====
+const SL={n:0,y:0};
+function scrollLock(on){const b=document.body;if(on){if(SL.n++===0){SL.y=window.scrollY;Object.assign(b.style,{position:'fixed',top:-SL.y+'px',left:'0',right:'0',width:'100%',overflow:'hidden'})}}
+ else if(SL.n>0&&--SL.n===0){Object.assign(b.style,{position:'',top:'',left:'',right:'',width:'',overflow:''});window.scrollTo(0,SL.y)}}
+const OVS=[()=>dlg.open,()=>{const v=document.getElementById('invv');return v&&!v.hidden&&v.style.display!=='none'},()=>!!document.querySelector('.whov')];
+const OST=OVS.map(()=>false);
+function syncLock(){OVS.forEach((f,i)=>{let o=false;try{o=!!f()}catch(e){}if(o!==OST[i]){OST[i]=o;scrollLock(o)}})}
+new MutationObserver(syncLock).observe(document.body,{attributes:true,attributeFilter:['open','hidden','style'],childList:true,subtree:true});
+dlg.addEventListener('close',()=>setTimeout(syncLock,0));
+(()=>{const st=document.createElement('style');st.textContent='dialog::backdrop{touch-action:none;overscroll-behavior:none}.whov{touch-action:none;overscroll-behavior:contain}.whl{touch-action:pan-y;overscroll-behavior:contain}#invv{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}';document.head.appendChild(st)})();
 
 // ===== v8.2: safe boot — render only after all code is loaded; never blank the list =====
 {const _Rs=R;R=function(){try{return _Rs()}catch(e){console.error('render',e);try{const m=document.querySelector('main')||document.getElementById('app')||document.body;
