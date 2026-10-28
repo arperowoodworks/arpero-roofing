@@ -525,7 +525,7 @@ function editBillDate(id){const j=job(id);open(`<div class="name">Bill date</div
   S.jobs.push({id,address:'20231 Ray Falls Dr, Tomball, TX 77375',gc:'Texas Advantage Roofing',crew:'Eduardo',start:'2026-10-19',finish:'2026-10-19',billDate:'2026-10-19',status:'Paid',stories:2,squares:32,billedSq:33,leftover:2,myRate:'',crewRate:'',
    extras:[{desc:'Flat peel-and-stick',unit:'sq',sq:1,rate:100,crew:60},{desc:'Ridge',unit:'bundles',sq:8,rate:'',crew:''},{desc:'Starter',unit:'bundles',sq:3,rate:'',crew:''},{desc:'2-story',unit:'sq',sq:32,rate:5,crew:5},{desc:'Plywood/OSB',unit:'each',sq:5,rate:15,crew:10}],
    notes:'Imported from Oscar\'s pay note: 33sq = 32 field + 1 flat. Paid $3,150. Crew Eduardo $2,370.'});
-  S.exp.push({id:uid(),cat:'Dumpster',job:id,amount:167,date:'2026-10-19',note:'Landfill'},{id:uid(),cat:'Fuel',job:id,amount:130,date:'2026-10-19',note:'Diesel'})}
+  S.exp.push({id:uid(),cat:'Landfill',job:id,amount:167,date:'2026-10-19',note:'Landfill'},{id:uid(),cat:'Fuel',job:id,amount:130,date:'2026-10-19',note:'Diesel'})}
  save()}catch(e){console.error('import',e)}})();
 {const _rJ=rJobs;rJobs=function(){let h=_rJ();const pb=S.jobs.filter(j=>j.status==='Paid').sort((a,b)=>(b.billDate||'').localeCompare(a.billDate||''));
  if(pb.length)h+=`<h2>Past bills</h2>`+pb.map(j=>`<div class="card"><div class="name">${mapA(j.address)}</div><div class="sub">📅 Bill ${esc(fmtD(j.billDate))} · Job ${esc(fmtD(j.start))}</div><div class="money"><div class="mc bill"><div class="mh">Bill ${esc(coName(j))}</div><div class="mt">${$(calcRev(j))}</div></div><div class="mc pay"><div class="mh">Pay ${esc(crewName(j))}</div><div class="mt">${$(hasPay(j.id)?crewCost(j.id):estPay(j))}</div></div></div></div>`).join('');return h}}
@@ -681,6 +681,8 @@ function bq(j,x){if(isB2R(x))return 0;if(!is2s(x)||/crew 2-story$/i.test(x.desc|
  return bSq(j)+all.filter(isFlat).reduce((a,y)=>a+num(y.sq),0)+all.filter(isB2R).reduce((a,y)=>a+num(y.sq),0)}
 try{if(!S.m35){(S.settings.items||[]).forEach(t=>{if(t.unit==='sq'&&/(2|two)\s*-?\s*stor/i.test(t.desc||''))t.crew=0});
  S.jobs.forEach(j=>(j.extras||[]).forEach(x=>{if(is2bL(x)||isB2R(x))x.crew=0}));S.m35=1;save()}}catch(e){console.error('m35',e)}
+// v37: landfill is its own category, never Dumpster
+try{if(!S.m37){(S.exp||[]).forEach(e=>{if(e.cat==='Dumpster'&&/landfill/i.test((e.note||'')+' '+(e.desc||'')+' '+(e.notes||'')))e.cat='Landfill'});S.m37=1;save()}}catch(e){console.error('m37',e)}
 function p2i(){return items().findIndex(t=>t.unit==='sq'&&/(2|two)\s*-?\s*stor/i.test(t.desc||''))}
 {const _iM=itemMenu;itemMenu=function(j,side){let h=_iM(j,side);const pi=p2i();if(pi>=0&&(j.extras||[]).some(is2bL))h=h.replace(new RegExp(`<option value="a${pi}">[^<]*</option>`),`<option value="a${pi}">2-story already on this job (edit)</option>`);return h}}
 {const _pI=pickItem;pickItem=function(id,v){const j=job(id);if(j&&v==='a'+p2i()){const k=(j.extras||[]).findIndex(is2bL);if(k>=0){alert('2-story already on this job');v='e'+k}}return _pI(id,v)}}
